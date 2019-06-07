@@ -97,7 +97,12 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-export EDITOR=nano
+alias zshconfig="vim ~/.zshrc"
+
+alias weather="curl wttr.in"
+alias k=kubectl
+
+export EDITOR=vim
 source $HOME/.dotfiles/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
 export TERM="xterm-256color"
 export WORKON_HOME=$HOME/Envs
