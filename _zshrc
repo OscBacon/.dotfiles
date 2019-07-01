@@ -1,5 +1,5 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH:.:$HOME/.local/bin:
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -110,5 +110,10 @@ source $HOME/.local/bin/virtualenvwrapper.sh
 
 export DISPLAY=:0.0
 export LIBGL_ALWAYS_INDIRECT=1
+
+# Setting for Docker for Windows
+if [[ "$(< /proc/version)" == *@(Microsoft|WSL)* ]]; then
+	export DOCKER_HOST=tcp://localhost:2375
+fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
