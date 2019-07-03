@@ -11,3 +11,4 @@
 	pom = push origin master
 	co = checkout
 	lg = log --graph --pretty=format:'%Cred%h%Creset%d -%Cblue %s%Creset %Cgreen(%ar) %Cblue<%an>%Creset' --abbrev-commit --date=relative
+	pr = pull --rebase
