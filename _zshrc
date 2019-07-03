@@ -64,6 +64,9 @@ plugins=(
   kubectl
   docker
   colorize
+  fzf
+  colored-man-pages
+  ubuntu
 )
 
 
