@@ -1,0 +1,13 @@
+[user]
+	email = oscar.baracos@numberly.com
+	name = Oscar Baracos
+[push]
+	default = simple
+[alias]
+	st = status
+	cm = commit -m
+	psup = push --set-upstream origin
+	cb = checkout -b
+	pom = push origin master
+	co = checkout
+	lg = log --graph --pretty=format:'%Cred%h%Creset%d -%Cblue %s%Creset %Cgreen(%ar) %Cblue<%an>%Creset' --abbrev-commit --date=relative
