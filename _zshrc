@@ -120,3 +120,10 @@ if [[ "$(< /proc/version)" == *@(Microsoft|WSL)* ]]; then
 fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+function encode { echo -n "$1" | base64; }
+
+export PATH="$PATH:/opt/mssql-tools/bin"
+
+# Don't create __pycache__ and pyc files
+export PYTHONDONTWRITEBYTECODE=1
