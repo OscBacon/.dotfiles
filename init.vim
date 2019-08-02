@@ -41,14 +41,20 @@ filetype plugin indent on
 let g:deoplete#enable_at_startup = 1
 set number
 
+set autoindent smartindent
+set smarttab
+set shiftwidth=2
+set tabstop=2
+set softtabstop=2
+set expandtab
+set backspace=eol,start,indent
+
 " Settings for python files
 au BufNewFile,BufRead *.py
     \ set tabstop=4 |
     \ set softtabstop=4 |
     \ set shiftwidth=4 |
     \ set textwidth=79 |
-    \ set expandtab |
-    \ set autoindent |
     \ set fileformat=unix |
 
 let g:ycm_autoclose_preview_window_after_completion=1
