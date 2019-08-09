@@ -77,7 +77,7 @@ set noshowmode
 set termguicolors
 colorscheme material
 
-let g:python3_host_prog = '/home/baracos.oscar/Envs/dev/bin/python'
+let g:python3_host_prog = expand('~/Envs/dev/bin/python')
 
 " NerdCommenter
 let g:NERDSpaceDelims = 1
