@@ -92,3 +92,9 @@ let g:NERDSpaceDelims = 1
 let g:NERDDefaultAlign = 'left'
 let g:NERDCommentEmptyLines = 1
 let g:NERDTrimTrailingWhitespace = 1
+
+for f in split(glob('~/.config/nvim/config/*.vim'), '\n')
+	exe 'source' f
+endfor
+
+nnoremap <c-p> :Files<CR>
