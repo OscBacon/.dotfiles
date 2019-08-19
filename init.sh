@@ -3,4 +3,5 @@ for rc in vimrc zshrc; do
 	rm "~/.${rc}"
 	ln -s "~/.dotfiles/_${rc}" "~/.${rc}"
 	ln -s "~/.dotfiles/init.vim" "~/.config/nvim/init.vim"
+  mv nvim/config* ~/.config/nvim/config/
 done
