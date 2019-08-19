@@ -1,40 +1,43 @@
-set nocompatible
 filetype off
+set nocompatible
 
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+call plug#begin('~/.local/share/nvim/plugged')
 
-Plugin 'gmarik/Vundle.vim'
-Plugin 'vim-scripts/indentpython.vim'
-Plugin 'nvie/vim-flake8'
-Plugin 'vim-syntastic/syntastic'
-Plugin 'jparise/vim-graphql'
-Plugin 'posva/vim-vue'
-Plugin 'pangloss/vim-javascript'
-"Plugin 'ycm-core/YouCompleteMe'
-Plugin 'sheerun/vim-polyglot'
-Plugin  'Chiel92/vim-autoformat'
-Plugin 'ambv/black'
-"Plugin 'davidhalter/jedi-vim'
-Plugin 'ervandew/supertab'
-Plugin 'crusoexia/vim-monokai'
-Plugin 'tomasr/molokai'
-Plugin 'joshdick/onedark.vim'
-Plugin 'kaicataldo/material.vim'
-Plugin 'fisadev/vim-isort'
-Plugin 'haya14busa/is.vim'
-Plugin 'dense-analysis/ale'
-Plugin 'Shougo/deoplete.nvim'
-Plugin 'zchee/deoplete-jedi'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'rhysd/committia.vim'
-Plugin 'tpope/vim-fugitive'
-Plugin 'scrooloose/nerdcommenter'
-"Plugin 'elubow/cql-vim'
-"Plugin 'Shougo/deoplete.nvim'
-"Plugin 'roxma/nvim-yarp'
-"Plugin 'roxma/vim-hug-neovim-rpc'
-call vundle#end()
+Plug 'vim-scripts/indentpython.vim'
+Plug 'nvie/vim-flake8'
+Plug 'vim-syntastic/syntastic'
+Plug 'jparise/vim-graphql'
+Plug 'posva/vim-vue'
+Plug 'pangloss/vim-javascript'
+"Plug 'ycm-core/YouCompleteMe'
+Plug 'sheerun/vim-polyglot'
+Plug  'Chiel92/vim-autoformat'
+Plug 'ambv/black'
+"Plug 'davidhalter/jedi-vim'
+Plug 'ervandew/supertab'
+Plug 'crusoexia/vim-monokai'
+Plug 'tomasr/molokai'
+Plug 'joshdick/onedark.vim'
+Plug 'kaicataldo/material.vim'
+Plug 'fisadev/vim-isort'
+Plug 'haya14busa/is.vim'
+Plug 'dense-analysis/ale'
+Plug 'Shougo/deoplete.nvim'
+Plug 'zchee/deoplete-jedi'
+Plug 'airblade/vim-gitgutter'
+Plug 'rhysd/committia.vim'
+Plug 'tpope/vim-fugitive'
+Plug 'scrooloose/nerdcommenter'
+Plug '~/.fzf' | Plug 'junegunn/fzf.vim'
+Plug 'itchyny/lightline.vim'
+" Nice formatting, use moresymbols branch
+Plug 'ehamberg/vim-cute-python', { 'branch': 'moresymbols' }
+Plug 'AndrewRadev/splitjoin.vim' " Join: gJ, split: gS
+"Plug 'elubow/cql-vim'
+"Plug 'Shougo/deoplete.nvim'
+"Plug 'roxma/nvim-yarp'
+"Plug 'roxma/vim-hug-neovim-rpc'
+call plug#end()
 
 filetype plugin indent on
 
@@ -77,7 +80,6 @@ set incsearch
 set inccommand=split
 
 " Interface
-Plugin 'itchyny/lightline.vim'
 set noshowmode
 
 set termguicolors
