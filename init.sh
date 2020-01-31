@@ -5,3 +5,6 @@ for rc in vimrc zshrc; do
 	ln -s "~/.dotfiles/init.vim" "~/.config/nvim/init.vim"
   mv nvim/config* ~/.config/nvim/config/
 done
+
+curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
