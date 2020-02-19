@@ -14,3 +14,7 @@
 	pr = pull --rebase
 [color]
 	ui = auto
+[credential]
+  helper = cache
+[core]
+	autocrlf = input
