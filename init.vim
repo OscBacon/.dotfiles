@@ -84,7 +84,8 @@ set inccommand=split
 set noshowmode
 
 set termguicolors
-colorscheme material
+colorscheme monokai
+hi Normal guibg=NONE ctermbg=NONE
 
 let g:python3_host_prog = expand('~/Envs/dev/bin/python')
 
