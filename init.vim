@@ -113,3 +113,6 @@ end
 let g:lightline = {
       \ 'colorscheme': 'onedark',
       \ }
+
+" Enable mouse
+set mouse=a
