@@ -100,3 +100,16 @@ for f in split(glob('~/.config/nvim/config/*.vim'), '\n')
 endfor
 
 nnoremap <c-p> :Files<CR>
+
+" Enable copying to win clipboard
+let s:clip = '/c/Windows/System32/clip.exe' 
+if executable(s:clip)
+  augroup WSLYank
+    autocmd!
+    autocmd TextYankPost * call system('echo '.shellescape(join(v:event.regcontents, "\<CR>")).' | '.s:clip)
+  augroup END
+end
+
+let g:lightline = {
+      \ 'colorscheme': 'onedark',
+      \ }
