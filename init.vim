@@ -11,8 +11,8 @@ Plug 'posva/vim-vue'
 Plug 'pangloss/vim-javascript'
 "Plug 'ycm-core/YouCompleteMe'
 Plug 'sheerun/vim-polyglot'
-Plug  'Chiel92/vim-autoformat'
-Plug 'ambv/black'
+Plug 'Chiel92/vim-autoformat'
+Plug 'psf/black'
 "Plug 'davidhalter/jedi-vim'
 Plug 'ervandew/supertab'
 Plug 'crusoexia/vim-monokai'
@@ -33,10 +33,11 @@ Plug 'itchyny/lightline.vim'
 " Nice formatting, use moresymbols branch
 Plug 'ehamberg/vim-cute-python', { 'branch': 'moresymbols' }
 Plug 'AndrewRadev/splitjoin.vim' " Join: gJ, split: gS
+Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern'}
 "Plug 'elubow/cql-vim'
-"Plug 'Shougo/deoplete.nvim'
-"Plug 'roxma/nvim-yarp'
-"Plug 'roxma/vim-hug-neovim-rpc'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+Plug 'connorholyday/vim-snazzy'
 call plug#end()
 
 filetype plugin indent on
