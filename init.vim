@@ -34,14 +34,16 @@ Plug 'itchyny/lightline.vim'
 " Nice formatting, use moresymbols branch
 " Plug 'ehamberg/vim-cute-python', { 'branch': 'moresymbols' }
 Plug 'AndrewRadev/splitjoin.vim' " Join: gJ, split: gS
-Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern'}
+" Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern'}
 "Plug 'elubow/cql-vim'
-Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'ngemily/vim-vp4'
 Plug 'connorholyday/vim-snazzy'
 Plug 'preservim/nerdtree'
 Plug 'majutsushi/tagbar'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+" Zen mode
 Plug 'junegunn/goyo.vim'
 call plug#end()
 
@@ -52,9 +54,9 @@ set number
 
 set autoindent smartindent
 set smarttab
-set shiftwidth=4
-set tabstop=4
-set softtabstop=4
+set shiftwidth=2
+set tabstop=2
+set softtabstop=2
 set expandtab
 set backspace=eol,start,indent
 set ruler
@@ -107,6 +109,9 @@ let g:NERDDefaultAlign = 'left'
 let g:NERDCommentEmptyLines = 1
 let g:NERDTrimTrailingWhitespace = 1
 
+" NerdTree Git Plugin
+let g:NERDTreeGitStatusConcealBrackets = 1 " default: 0
+
 for f in split(glob('~/.config/nvim/config/*.vim'), '\n')
 	exe 'source' f
 endfor
@@ -114,13 +119,13 @@ endfor
 nnoremap <c-p> :Files<CR>
 
 " Enable copying to win clipboard
-let s:clip = '/c/Windows/System32/clip.exe' 
-if executable(s:clip)
-  augroup WSLYank
-    autocmd!
-    autocmd TextYankPost * call system('echo '.shellescape(join(v:event.regcontents, "\<CR>")).' | '.s:clip)
-  augroup END
-end
+" let s:clip = '/c/Windows/System32/clip.exe'
+" if executable(s:clip)
+"   augroup WSLYank
+"     autocmd!
+"     autocmd TextYankPost * call system('echo '.shellescape(join(v:event.regcontents, "\<CR>")).' | '.s:clip)
+"   augroup END
+" end
 
 let g:lightline = {
       \ 'colorscheme': 'one',
@@ -181,3 +186,23 @@ autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
 set pastetoggle=<F6>
+
+let g:ft = ''
+function! NERDCommenter_before()
+  if &ft == 'vue'
+    let g:ft = 'vue'
+    let stack = synstack(line('.'), col('.'))
+    if len(stack) > 0
+      let syn = synIDattr((stack)[0], 'name')
+      if len(syn) > 0
+        exe 'setf ' . substitute(tolower(syn), '^vue_', '', '')
+      endif
+    endif
+  endif
+endfunction
+function! NERDCommenter_after()
+  if g:ft == 'vue'
+    setf vue
+    let g:ft = ''
+  endif
+endfunction
