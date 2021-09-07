@@ -101,3 +101,4 @@ set t_ut=""
 set tagstack
 set tags=./tags,tags;
 
+hi Normal guibg=NONE ctermbg=NONE
