@@ -22,6 +22,7 @@ Plug 'crusoexia/vim-monokai'
 Plug 'tomasr/molokai'
 Plug 'joshdick/onedark.vim'
 Plug 'kaicataldo/material.vim'
+Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 " Plug 'fisadev/vim-isort'
 Plug 'haya14busa/is.vim'
 Plug 'dense-analysis/ale'
@@ -82,7 +83,7 @@ vnoremap <C-k> :m '<-2<CR>gv=gv
 
 set incsearch
 
-colorscheme onedark
+colorscheme monokai
 
 let g:lightline = {
       \ 'colorscheme': 'onedark',
