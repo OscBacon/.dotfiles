@@ -10,12 +10,12 @@
 	cb = checkout -b
 	pom = push origin master
 	co = checkout
-	lg = log --graph --pretty=format:'%Cred%h%Creset%d -%Cblue %s%Creset %Cgreen(%ar) %Cblue<%an>%Creset' --abbrev-commit --date=relative
+	lg = log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 	pr = pull --rebase
 	uv = add -uv
 [color]
 	ui = auto
 [credential]
-	helper = cache
+	helper = store
 [core]
 	autocrlf = input
