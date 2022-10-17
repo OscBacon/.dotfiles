@@ -6,5 +6,9 @@ for rc in vimrc zshrc; do
   mv nvim/config* ~/.config/nvim/config/
 done
 
+mkdir -p ~/.config/nvim
+ln -s "~/.dotfiles/coc-settings.json" "~/.config/nvim/coc-settings.json"
+ln -s "~/.dotfiles/init.vim" "~/.config/nvim/coc-settings.json"
+
 curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
