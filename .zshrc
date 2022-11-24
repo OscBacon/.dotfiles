@@ -111,6 +111,10 @@ export LC_CTYPE=en_US.UTF-8
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
 
+# Autosuggestions configuration
+export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
@@ -148,10 +152,30 @@ if [[ "$(< /proc/version)" == *@(Microsoft|WSL)* ]]; then
     export DOCKER_HOST=tcp://localhost:2375
 fi
 
+# FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_COMMAND="fd --type file --strip-cwd-prefix --color=always --exclude .git"
-export FZF_DEFAULT_OPTS="--ansi"
+export FZF_DEFAULT_OPTS="--ansi --height 100%"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_CTRL_T_OPTS="--preview 'bat --style=numbers --color=always --line-range :500 {}'"
+
+export OWL="[0m[34mO[0m [35mW[0m [31mL[0m"
+
+# Search for kube pods using fzf
+pods() {
+  FZF_DEFAULT_COMMAND="kubectl get pods --all-namespaces" \
+    fzf --info=inline --layout=reverse --header-lines=1 \
+        --prompt "$(kubectl config current-context | sed 's/-context$//')> " \
+        --header "$OWL ╱ Enter (kubectl exec) ╱ CTRL-O (less log) ╱ CTRL-R (reload) ╱ CTRL-D (describe) / CTRL-W (delete) \n\n" \
+        --bind 'ctrl-/:change-preview-window(80%,border-bottom|hidden|)' \
+        --bind 'enter:execute:kubectl exec -it --namespace {1} {2} -- bash > /dev/tty' \
+        --bind 'ctrl-o:execute:kubectl logs --all-containers --namespace {1} {2} | less' \
+        --bind 'ctrl-r:reload:eval $FZF_DEFAULT_COMMAND' \
+        --bind 'ctrl-d:execute:kubectl describe pod --namespace {1} {2} | less' \
+        --bind 'ctrl-w:execute:kubectl delete pod --namespace {1} {2}' \
+        --preview-window up:follow \
+        --preview 'kubectl logs --follow --all-containers --tail=10000 --namespace {1} {2}' "$@" \
+}
 
 function encode { echo -n "$1" | base64; }
 
@@ -202,6 +226,9 @@ export PNPM_HOME="/home/baracoso/.local/share/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 
+# Vulcan settings
+source ~/.zshrc.vulcan
+
 function json-curl { \
     curl $1 \
     -X POST \
@@ -224,7 +251,17 @@ function highlight () {
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-alias owlfetch='bash <(curl -sL neowofetch.hydev.org) --ascii  "$(cat ~/owl/owl.out)"'
+# Ruby gem settings
+export GEM_HOME="/home/baracoso/.gem"
+export GEM_PATH="/home/baracoso/.gem"
+export PATH="$PATH:/home/baracoso/.gem/bin"
 
 export PATH="$PATH:/home/baracoso/.cargo/bin"
 export PATH="$PATH:/home/baracoso/tools/kubectl-plugins"
+
+# zsh history settings
+export HISTSIZE=100000
+export SAVEHIST=$HISTSIZE
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history.
+setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
+setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
