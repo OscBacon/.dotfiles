@@ -8,7 +8,7 @@ done
 
 mkdir -p ~/.config/nvim
 ln -s "~/.dotfiles/coc-settings.json" "~/.config/nvim/coc-settings.json"
-ln -s "~/.dotfiles/init.vim" "~/.config/nvim/coc-settings.json"
+ln -s "~/.dotfiles/init.vim" "~/.config/nvim/init.vim"
 
 curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
