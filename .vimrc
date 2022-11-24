@@ -15,7 +15,6 @@ Plug 'pangloss/vim-javascript'
 Plug 'justmao945/vim-clang'
 Plug 'sheerun/vim-polyglot'
 Plug 'Chiel92/vim-autoformat'
-Plug 'psf/black'
 "Plug 'davidhalter/jedi-vim'
 Plug 'ervandew/supertab'
 Plug 'crusoexia/vim-monokai'
@@ -38,6 +37,7 @@ Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern'}
 " Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'connorholyday/vim-snazzy'
+Plug 'preservim/nerdtree', { 'on' : ['NERDTreeToggle', 'NERDTreeFind', 'NERDTree'] }
 Plug 'ngemily/vim-vp4'
 
 call plug#end()
@@ -91,6 +91,18 @@ let g:lightline = {
 
 " Enable mouse
 set mouse=a
+
+nmap <leader>n :NERDTreeToggle<cr>
+nmap <leader>N :NERDTreeFind<cr>
+nmap <leader>t :Texplore<cr>
+nmap <leader>S :Sexplore<cr>
+
+set foldmethod=syntax
+set foldlevelstart=20
+
+" NERDTree
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | Explore | endif
 
 set laststatus=2
 set noshowmode

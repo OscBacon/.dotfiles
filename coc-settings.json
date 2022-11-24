@@ -1,20 +1,21 @@
 {
-  "languageserver": {
-    "haskell": {
-      "command": "haskell-language-server-wrapper",
-      "args": ["--lsp"],
-      "rootPatterns": ["*.cabal", "stack.yaml", "cabal.project", "package.yaml", "hie.yaml"],
-      "filetypes": ["haskell", "lhaskell"]
-    }
-    //},
-    //"golang": {
-    //  "command": "gopls",
-    //  "rootPatterns": ["go.work", "go.mod", ".vim/", ".git/", ".hg/"],
-    //  "filetypes": ["go"],
-    //  "initializationOptions": {
-    //    "completeUnimported": true,
-    //    "usePlaceholders": true
-    //  }
-    //}
-  }
+    "languageserver": {
+        "haskell": {
+            "command": "haskell-language-server-wrapper",
+            "args": ["--lsp"],
+            "rootPatterns": ["*.cabal", "stack.yaml", "cabal.project", "package.yaml", "hie.yaml"],
+            "filetypes": ["haskell", "lhaskell"]
+        }
+        //},
+        //"golang": {
+            //  "command": "gopls",
+            //  "rootPatterns": ["go.work", "go.mod", ".vim/", ".git/", ".hg/"],
+            //  "filetypes": ["go"],
+            //  "initializationOptions": {
+                //    "completeUnimported": true,
+                //    "usePlaceholders": true
+                //  }
+                //}
+    },
+    "coc.preferences.formatOnSaveFiletypes": ["go", "python", "typescript", "javascript"]
 }

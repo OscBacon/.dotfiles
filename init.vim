@@ -51,14 +51,17 @@ Plug 'plasticboy/vim-markdown'
 " LSP
 " Plug 'neovim/nvim-lspconfig'
 
+" Kube / Helm
+Plug 'towolf/vim-helm'
 " Solidity
 Plug 'TovarishFin/vim-solidity'
 " Go
-" Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'luochen1990/rainbow'
 " Icons
-Plug 'kyazdani42/nvim-web-devicons'
-Plug 'ryanoasis/vim-devicons'
+" Plug 'kyazdani42/nvim-web-devicons'
+" Plug 'ryanoasis/vim-devicons'
+Plug 'bkad/CamelCaseMotion'
 call plug#end()
 
 filetype plugin indent on
@@ -111,8 +114,12 @@ augroup filetype_jsx
     autocmd FileType javascript set filetype=javascriptreact
 augroup END
 
+" Settings for go files
 au BufNewFile,BufRead *.go
             \ setlocal noexpandtab tabstop=4 shiftwidth=4 softtabstop=4
+autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
+
+" autocmd FileType go autocmd BufWritePre <buffer> Autoformat
 
 let g:ycm_autoclose_preview_window_after_completion=1
 map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
@@ -169,7 +176,11 @@ let g:coc_global_extensions = [
             \ 'coc-java',
             \ 'coc-elixir',
             \ 'coc-yaml',
-            \ 'coc-go'
+            \ 'coc-go',
+            \ 'coc-lightbulb',
+            \ 'coc-protobuf',
+            \ 'coc-clangd',
+            \ 'coc-json'
             \ ]
 " \ 'coc-jedi',
 
@@ -191,6 +202,11 @@ inoremap <A-a> α
 
 set incsearch
 set inccommand=split
+
+" Case insensitive search
+set ignorecase
+" Except if the search contains an uppercase character
+set smartcase
 
 " Interface
 set noshowmode
@@ -409,6 +425,7 @@ let g:vista_executive_for = {
 "   \ ]
 " \ }
 
+" Go syntax highlighting
 let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
 let g:go_highlight_functions = 1
@@ -418,3 +435,5 @@ let g:go_highlight_function_parameters = 1
 let g:go_highlight_variable_declarations = 1
 let g:go_highlight_variable_assignments = 1
 
+" CamelCaseMotion
+let g:camelcasemotion_key = ','
