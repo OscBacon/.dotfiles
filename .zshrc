@@ -84,6 +84,7 @@ plugins=(
     ubuntu
     emoji
     zsh-autosuggestions
+    zsh-syntax-highlighting
     # nvm
 )
 
@@ -151,7 +152,6 @@ function knodespvcs {
 }
 
 export EDITOR=nvim
-source $HOME/.dotfiles/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
 # export TERM="xterm-256color"
 export WORKON_HOME=$HOME/Envs
 export VIRTUALENVWRAPPER_PYTHON=/home/linuxbrew/.linuxbrew/Homebrew/bin/python3
@@ -205,10 +205,6 @@ export PATH="/home/linuxbrew/.linuxbrew/Homebrew/bin:$PATH"
 export PATH="/home/linuxbrew/.linuxbrew/Homebrew/sbin:$PATH"
 
 # source /opt/intel/oneapi/vtune/latest/env/vars.sh
-
-alias rdp="ssh baracoso@nxsrv.teach.cs.toronto.edu -L3388:nxsrv.teach.cs.toronto.edu:3389"
-
-export TOPDIR=~/csc469_a2/a2
 
 alias guv="git add -uv"
 alias gcan="git commit --amend --no-edit"
@@ -274,23 +270,16 @@ setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
 fpath=($fpath ~/.zsh/completion)
 
 ## WSL settings
-#  Shortcut to opening a WSL path in Explorer
-
-# Open files in explorer if on windows
+# Open files in Explorer if on Windows
 if [[ "$(< /proc/version)" == *(Microsoft|WSL)* ]]; then
     function exp {
         explorer.exe `wslpath -w "$1"`
     }
+
+    # Opens webpages in the default Windows browser
+    export BROWSER=wslview
 fi
 
-# Setting for Docker for Windows
-# if [[ "$(< /proc/version)" == *(Microsoft|WSL)* ]]; then
-#     export DOCKER_HOST=tcp://localhost:2375
-# fi
-
-
-# Opens webpages in the default Windows browser
-export BROWSER=wslview
 
 function fppvi {
     ${@:1} | fpp -a -c 'nvim -p'
