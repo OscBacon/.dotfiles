@@ -56,12 +56,20 @@ Plug 'towolf/vim-helm'
 " Solidity
 Plug 'TovarishFin/vim-solidity'
 " Go
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+" Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'luochen1990/rainbow'
 " Icons
 " Plug 'kyazdani42/nvim-web-devicons'
 " Plug 'ryanoasis/vim-devicons'
 Plug 'bkad/CamelCaseMotion'
+" Indent select
+Plug 'michaeljsmith/vim-indent-object'
+" Multi cursors
+Plug 'mg979/vim-visual-multi', {'branch': 'master'}
+" Dotenv
+Plug 'tpope/vim-dotenv'
+" DB
+Plug 'tpope/vim-dadbod'
 call plug#end()
 
 filetype plugin indent on
@@ -221,6 +229,9 @@ colorscheme kanagawa
 " colorscheme tokyonight
 hi Normal guibg=NONE ctermbg=NONE
 
+" Allow more memory to draw syntax in longer files
+set maxmempattern=50000
+
 let g:python3_host_prog = expand('~/Envs/dev/bin/python')
 
 let g:rainbow_active = 1
@@ -272,8 +283,6 @@ let g:NERDTreeGitStatusConcealBrackets = 1 " default: 0
 for f in split(glob('~/.config/nvim/config/*.vim'), '\n')
     exe 'source' f
 endfor
-
-nnoremap <c-p> :Files<CR>
 
 " Settings for WSL 
 " Open GBrowse links with host browser
@@ -361,6 +370,7 @@ nnoremap <F2> :Goyo<CR>
 nnoremap <expr> <leader>f (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<cr>"
 nnoremap <silent> <leader>b :Buffer<CR>
 nnoremap <silent> <leader>l :Lines<CR>
+nnoremap <silent> <leader>r :Rg!<CR>
 
 " Insert mode completion
 imap <c-x><c-k> <plug>(fzf-complete-word)

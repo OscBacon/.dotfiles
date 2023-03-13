@@ -112,7 +112,7 @@ export LC_CTYPE=en_US.UTF-8
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
 
 # Autosuggestions configuration
-export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=40
 export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
@@ -127,6 +127,7 @@ alias zshconfig="nvim ~/.zshrc"
 
 function weather { curl "wttr.in/$1?m" }
 
+## Kubernetes
 alias k=kubectl
 # Define as a function to avoid escaping quotes
 function ktaints {
@@ -137,6 +138,18 @@ function kpods-on-node {
 kubectl get pods --field-selector spec.nodeName=$1 -o wide ${@:2}
 }
 
+function kbmnodes {
+    kubectl get nodes | grep bm | awk '{print $1}'
+}
+
+function knodepvcs {
+    kubectl get pvc -A -o jsonpath="{range .items[?(@.metadata.annotations.volume\.kubernetes\.io/selected-node=='$1')]}{.metadata.namespace}{'\t'}{.metadata.name}{'\n'}{end}" --all-namespaces
+}
+
+function knodespvcs {
+    kbmnodes | while read p; do echo "=== $p"; kubectl get pvc -A -o jsonpath="{range .items[?(@.metadata.annotations.volume\.kubernetes\.io/selected-node=='$p')]}{.metadata.namespace}{'\t'}{.metadata.name}{'\n'}{end}" --all-namespaces; echo; done
+}
+
 export EDITOR=nvim
 source $HOME/.dotfiles/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
 # export TERM="xterm-256color"
@@ -144,17 +157,12 @@ export WORKON_HOME=$HOME/Envs
 export VIRTUALENVWRAPPER_PYTHON=/home/linuxbrew/.linuxbrew/Homebrew/bin/python3
 source $HOME/.local/bin/virtualenvwrapper.sh
 
-export DISPLAY=:0.0
+# export DISPLAY=:0.0
 export LIBGL_ALWAYS_INDIRECT=1
-
-# Setting for Docker for Windows
-if [[ "$(< /proc/version)" == *@(Microsoft|WSL)* ]]; then
-    export DOCKER_HOST=tcp://localhost:2375
-fi
 
 # FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export FZF_DEFAULT_COMMAND="fd --type file --strip-cwd-prefix --color=always --exclude .git"
+export FZF_DEFAULT_COMMAND="fd --strip-cwd-prefix --color=always --exclude .git"
 export FZF_DEFAULT_OPTS="--ansi --height 100%"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_CTRL_T_OPTS="--preview 'bat --style=numbers --color=always --line-range :500 {}'"
@@ -166,13 +174,14 @@ pods() {
   FZF_DEFAULT_COMMAND="kubectl get pods --all-namespaces" \
     fzf --info=inline --layout=reverse --header-lines=1 \
         --prompt "$(kubectl config current-context | sed 's/-context$//')> " \
-        --header "$OWL ╱ Enter (kubectl exec) ╱ CTRL-O (less log) ╱ CTRL-R (reload) ╱ CTRL-D (describe) / CTRL-W (delete) \n\n" \
-        --bind 'ctrl-/:change-preview-window(80%,border-bottom|hidden|)' \
-        --bind 'enter:execute:kubectl exec -it --namespace {1} {2} -- bash > /dev/tty' \
+        --header "$OWL ╱ Enter (kubectl exec) ╱ CTRL-O (less log) ╱ CTRL-R (reload) ╱ CTRL-D (describe) / CTRL-W (delete) / CTRL-T (tail)" \
+        --bind 'ctrl-/:change-preview-window(80%,border-bottom|hidden)' \
+        --bind 'enter:execute:kubectl exec -it --namespace {1} {2} -- sh > /dev/tty' \
         --bind 'ctrl-o:execute:kubectl logs --all-containers --namespace {1} {2} | less' \
         --bind 'ctrl-r:reload:eval $FZF_DEFAULT_COMMAND' \
         --bind 'ctrl-d:execute:kubectl describe pod --namespace {1} {2} | less' \
         --bind 'ctrl-w:execute:kubectl delete pod --namespace {1} {2}' \
+        --bind 'ctrl-t:execute:kubectl logs --follow --tail=0 --namespace {1} {2}' \
         --preview-window up:follow \
         --preview 'kubectl logs --follow --all-containers --tail=10000 --namespace {1} {2}' "$@" \
 }
@@ -185,11 +194,6 @@ export PYTHONDONTWRITEBYTECODE=1
 alias e=nvim
 
 function cheat { curl cheat.sh/$1 }
-
-# Open files in explorer if on windows
-if [[ "$(< /proc/version)" == *@(Microsoft|WSL)* ]]; then
-    alias exp="explorer.exe"
-fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -265,3 +269,46 @@ export SAVEHIST=$HISTSIZE
 setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history.
 setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
 setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
+
+# eksctl
+fpath=($fpath ~/.zsh/completion)
+
+## WSL settings
+#  Shortcut to opening a WSL path in Explorer
+
+# Open files in explorer if on windows
+if [[ "$(< /proc/version)" == *(Microsoft|WSL)* ]]; then
+    function exp {
+        explorer.exe `wslpath -w "$1"`
+    }
+fi
+
+# Setting for Docker for Windows
+# if [[ "$(< /proc/version)" == *(Microsoft|WSL)* ]]; then
+#     export DOCKER_HOST=tcp://localhost:2375
+# fi
+
+
+# Opens webpages in the default Windows browser
+export BROWSER=wslview
+
+function fppvi {
+    ${@:1} | fpp -a -c 'nvim -p'
+}
+
+# export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/lib/x86_64-linux-gnu/:/home/linuxbrew/.linuxbrew/Homebrew/lib"
+alias ctop='TERM="${TERM/#tmux/screen}" ctop'
+
+# krew path
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+function ymerge {
+     yq ea '. as $item ireduce ({}; . * $item )' ${@:1}
+}
+export PATH=$PATH:/usr/local/go/bin
+
+# JQ
+export JQ_COLORS="7;31"
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /home/linuxbrew/.linuxbrew/Homebrew/Cellar/mc/RELEASE.2023-01-28T20-29-38Z_1/bin/mc mc
