@@ -200,7 +200,7 @@ function cheat { curl cheat.sh/$1 }
 
 alias nrs="npm run serve"
 
-# export PATH="/home/baracoso/.linuxbrew/Homebrew/bin:$PATH"
+# export PATH="~/.linuxbrew/Homebrew/bin:$PATH"
 export PATH="/home/linuxbrew/.linuxbrew/Homebrew/bin:$PATH"
 export PATH="/home/linuxbrew/.linuxbrew/Homebrew/sbin:$PATH"
 
@@ -220,13 +220,13 @@ function ef { find -wholename $1 | xargs nvim }
 # Fixes an issue with P10k preventing FPP from working properly
 alias fpp="fpp -ni"
 
-[ -f "/home/baracoso/.ghcup/env" ] && source "/home/baracoso/.ghcup/env" # ghcup-env
-export PATH="$PATH:/home/baracoso/.cabal/bin:/home/baracoso/.krew/bin"
+[ -f "~/.ghcup/env" ] && source "~/.ghcup/env" # ghcup-env
+export PATH="$PATH:~/.cabal/bin:~/.krew/bin"
 
 function ghcl { git clone git@github.com:$1.git ${@:2}}
 
 # pnpm
-export PNPM_HOME="/home/baracoso/.local/share/pnpm"
+export PNPM_HOME="~/.local/share/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 
@@ -240,7 +240,7 @@ function json-curl { \
     -d \'$2\'
 }
 
-export PATH="$PATH:/home/baracoso/go/bin"
+export PATH="$PATH:~/go/bin"
 
 alias glint="golangci-lint run"
 
@@ -256,12 +256,12 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 # Ruby gem settings
-export GEM_HOME="/home/baracoso/.gem"
-export GEM_PATH="/home/baracoso/.gem"
-export PATH="$PATH:/home/baracoso/.gem/bin"
+export GEM_HOME="~/.gem"
+export GEM_PATH="~/.gem"
+export PATH="$PATH:~/.gem/bin"
 
-export PATH="$PATH:/home/baracoso/.cargo/bin"
-export PATH="$PATH:/home/baracoso/tools/kubectl-plugins"
+export PATH="$PATH:~/.cargo/bin"
+export PATH="$PATH:~/tools/kubectl-plugins"
 
 # zsh history settings
 export HISTSIZE=100000
