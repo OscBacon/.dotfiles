@@ -10,12 +10,6 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
     source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/usr/local/bin:$PATH:.:$HOME/.local/bin:
-
-# Path to your oh-my-zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
-
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
@@ -67,8 +61,6 @@ COMPLETION_WAITING_DOTS="true"
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-export NVM_LAZY=1
-
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
@@ -85,32 +77,18 @@ plugins=(
     emoji
     zsh-autosuggestions
     zsh-syntax-highlighting
-    # nvm
+    nvm
 )
 
 
 source $ZSH/oh-my-zsh.sh
 
-# User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
-
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
-
-# ssh
-# export SSH_KEY_PATH="~/.ssh/rsa_id"
 
 # Autosuggestions configuration
 export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=40
@@ -130,10 +108,17 @@ function weather { curl "wttr.in/$1?m" }
 
 ## Kubernetes
 alias k=kubectl
+
 # Define as a function to avoid escaping quotes
 function ktaints {
     kubectl get nodes -o go-template='{{range $item := .items}}{{with $nodename := $item.metadata.name}}{{range $taint := $item.spec.taints}}{{if and (eq $taint.effect "NoSchedule")}}{{printf "%s %s\n" $nodename $taint.key}}{{end}}{{end}}{{end}}{{end}}'
 }
+
+# Define as a function to avoid escaping quotes
+function klabels {
+kubectl get nodes -o go-template='{{range $item := .items}}{{with $nodename := $item.metadata.name}}{{range $key, $val := $item.metadata.labels}}{{printf "%s %s:%s\n" $nodename $key $val}}{{end}}{{end}}{{end}}'
+}
+
 # Gets pods scheduled on node $1
 function kpods-on-node {
 kubectl get pods --field-selector spec.nodeName=$1 -o wide ${@:2}
@@ -151,11 +136,11 @@ function knodespvcs {
     kbmnodes | while read p; do echo "=== $p"; kubectl get pvc -A -o jsonpath="{range .items[?(@.metadata.annotations.volume\.kubernetes\.io/selected-node=='$p')]}{.metadata.namespace}{'\t'}{.metadata.name}{'\n'}{end}" --all-namespaces; echo; done
 }
 
-export EDITOR=nvim
-# export TERM="xterm-256color"
-export WORKON_HOME=$HOME/Envs
-export VIRTUALENVWRAPPER_PYTHON=/home/linuxbrew/.linuxbrew/Homebrew/bin/python3
-source $HOME/.local/bin/virtualenvwrapper.sh
+# kcopysecret <secret-name> <secret-namespace> <new-namespace>
+function kcopysecret {
+    kubectl get secret $1 -n $2 -o yaml | sed s/"namespace: $2"/"namespace: $3"/| kubectl apply -n $3 -f -
+}
+
 
 # export DISPLAY=:0.0
 export LIBGL_ALWAYS_INDIRECT=1
@@ -175,7 +160,7 @@ pods() {
     fzf --info=inline --layout=reverse --header-lines=1 \
         --prompt "$(kubectl config current-context | sed 's/-context$//')> " \
         --header "$OWL ╱ Enter (kubectl exec) ╱ CTRL-O (less log) ╱ CTRL-R (reload) ╱ CTRL-D (describe) / CTRL-W (delete) / CTRL-T (tail)" \
-        --bind 'ctrl-/:change-preview-window(80%,border-bottom|hidden)' \
+        --bind 'ctrl-/:change-preview-window(wrap|)' \
         --bind 'enter:execute:kubectl exec -it --namespace {1} {2} -- sh > /dev/tty' \
         --bind 'ctrl-o:execute:kubectl logs --all-containers --namespace {1} {2} | less' \
         --bind 'ctrl-r:reload:eval $FZF_DEFAULT_COMMAND' \
@@ -184,12 +169,16 @@ pods() {
         --bind 'ctrl-t:execute:kubectl logs --follow --tail=0 --namespace {1} {2}' \
         --preview-window up:follow \
         --preview 'kubectl logs --follow --all-containers --tail=10000 --namespace {1} {2}' "$@" \
+
+        # --bind 'ctrl-/:change-preview-window(80%,border-bottom|80%,border-bottom,wrap|)' \
 }
 
 function encode { echo -n "$1" | base64; }
 
-# Don't create __pycache__ and pyc files
-export PYTHONDONTWRITEBYTECODE=1
+function hex2dec { printf '%d' $1 } 
+
+# Piped
+function hex2decp { read p; printf '%d' $p } 
 
 alias e=nvim
 
@@ -199,12 +188,6 @@ function cheat { curl cheat.sh/$1 }
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 alias nrs="npm run serve"
-
-# export PATH="~/.linuxbrew/Homebrew/bin:$PATH"
-export PATH="/home/linuxbrew/.linuxbrew/Homebrew/bin:$PATH"
-export PATH="/home/linuxbrew/.linuxbrew/Homebrew/sbin:$PATH"
-
-# source /opt/intel/oneapi/vtune/latest/env/vars.sh
 
 alias guv="git add -uv"
 alias gcan="git commit --amend --no-edit"
@@ -217,14 +200,8 @@ function ef { find -wholename $1 | xargs nvim }
 alias fpp="fpp -ni"
 
 [ -f "~/.ghcup/env" ] && source "~/.ghcup/env" # ghcup-env
-export PATH="$PATH:~/.cabal/bin:~/.krew/bin"
 
 function ghcl { git clone git@github.com:$1.git ${@:2}}
-
-# pnpm
-export PNPM_HOME="~/.local/share/pnpm"
-export PATH="$PNPM_HOME:$PATH"
-# pnpm end
 
 # Vulcan settings
 source ~/.zshrc.vulcan
@@ -236,8 +213,6 @@ function json-curl { \
     -d \'$2\'
 }
 
-export PATH="$PATH:~/go/bin"
-
 alias glint="golangci-lint run"
 
 # Extract Tar Gzipped archive"
@@ -247,17 +222,9 @@ function highlight () {
     grep --color=always -E "$1|$" "${@:2}"
 }
 
-# Tmux settings
+# Tmux 
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
-
-# Ruby gem settings
-export GEM_HOME="~/.gem"
-export GEM_PATH="~/.gem"
-export PATH="$PATH:~/.gem/bin"
-
-export PATH="$PATH:~/.cargo/bin"
-export PATH="$PATH:~/tools/kubectl-plugins"
 
 # zsh history settings
 export HISTSIZE=100000
@@ -280,7 +247,6 @@ if [[ "$(< /proc/version)" == *(Microsoft|WSL)* ]]; then
     export BROWSER=wslview
 fi
 
-
 function fppvi {
     ${@:1} | fpp -a -c 'nvim -p'
 }
@@ -288,13 +254,9 @@ function fppvi {
 # export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/lib/x86_64-linux-gnu/:/home/linuxbrew/.linuxbrew/Homebrew/lib"
 alias ctop='TERM="${TERM/#tmux/screen}" ctop'
 
-# krew path
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-
 function ymerge {
      yq ea '. as $item ireduce ({}; . * $item )' ${@:1}
 }
-export PATH=$PATH:/usr/local/go/bin
 
 # JQ
 export JQ_COLORS="7;31"
