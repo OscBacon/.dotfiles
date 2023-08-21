@@ -1,21 +1,26 @@
 [user]
-	email = oscar.baracos@gmail.com
-	name = Oscar Baracos
+    email = oscar.baracos@gmail.com
+    name = Oscar Baracos
+    signingkey = D464F2B4010E4663
+[gpg]
+    program = gpg
+[commit]
+    gpgsign = true
 [push]
-	default = simple
+    default = simple
 [alias]
-	st = status
-	cm = commit -m
-	psup = push --set-upstream origin
-	cb = checkout -b
-	pom = push origin master
-	co = checkout
-	lg = log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
-	pr = pull --rebase
-	uv = add -uv
+    st = status
+    cm = commit -m
+    psup = push --set-upstream origin
+    cb = checkout -b
+    pom = push origin master
+    co = checkout
+    lg = log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+    pr = pull --rebase
+    uv = add -uv
 [color]
-	ui = auto
+    ui = auto
 [credential]
-	helper = store
+    helper = store
 [core]
-	autocrlf = input
+    autocrlf = input
