@@ -15,6 +15,7 @@ fi
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 # ZSH_THEME="agnoster"
 ZSH_THEME="powerlevel10k/powerlevel10k"
+# ZSH_THEME="none"
 
 # Set list of themes to load
 # Setting this variable when ZSH_THEME=random
@@ -78,6 +79,9 @@ plugins=(
     zsh-autosuggestions
     zsh-syntax-highlighting
     nvm
+    npm
+    yarn
+    zshmarks
 )
 
 
@@ -92,7 +96,7 @@ export LC_CTYPE=en_US.UTF-8
 
 # Autosuggestions configuration
 export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=40
-export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+export ZSH_AUTOSUGGEST_STRATEGY=(completion history)
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -150,7 +154,11 @@ export LIBGL_ALWAYS_INDIRECT=1
 export FZF_DEFAULT_COMMAND="fd --strip-cwd-prefix --color=always --exclude .git"
 export FZF_DEFAULT_OPTS="--ansi --height 100%"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_CTRL_T_OPTS="--preview 'bat --style=numbers --color=always --line-range :500 {}'"
+export FZF_CTRL_T_OPTS="\
+    --prompt 'Git>' --preview 'bat --style=numbers --color=always --line-range :500 {}' \
+    --bind 'ctrl-d:change-prompt(Directories> )+reload(fd --strip-cwd-prefix --color=always --no-ignore --type d)'
+    --bind 'ctrl-g:change-prompt(All> )+reload(fd --strip-cwd-prefix --color=always --no-ignore)' \
+    --bind 'ctrl-t:change-prompt(Git> )+reload($FZF_DEFAULT_COMMAND)'"
 
 export OWL="[0m[34mO[0m [35mW[0m [31mL[0m"
 
@@ -188,6 +196,9 @@ function cheat { curl cheat.sh/$1 }
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 alias nrs="npm run serve"
+alias nrt="npm run test"
+alias nrb="npm run build"
+alias nr="npm run"
 
 alias guv="git add -uv"
 alias gcan="git commit --amend --no-edit"
@@ -237,19 +248,24 @@ setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
 fpath=($fpath ~/.zsh/completion)
 
 ## WSL settings
-# Open files in Explorer if on Windows
 if [[ "$(< /proc/version)" == *(Microsoft|WSL)* ]]; then
+    # Open files in Explorer if on Windows
     function exp {
         explorer.exe `wslpath -w "$1"`
     }
 
     # Opens webpages in the default Windows browser
     export BROWSER=wslview
+
+    export HOST=`ip route show default | awk '{print $3}'`
 fi
 
 function fppvi {
     ${@:1} | fpp -a -c 'nvim -p'
 }
+
+# Edit modified git files
+alias em="git status | grep modified | fpp -a -c 'nvim -p' -e 'ENTER'"
 
 # export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/lib/x86_64-linux-gnu/:/home/linuxbrew/.linuxbrew/Homebrew/lib"
 alias ctop='TERM="${TERM/#tmux/screen}" ctop'
@@ -263,3 +279,49 @@ export JQ_COLORS="7;31"
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /home/linuxbrew/.linuxbrew/Homebrew/Cellar/mc/RELEASE.2023-01-28T20-29-38Z_1/bin/mc mc
+
+# eval "$(starship init zsh)"
+
+# ZSHmarks
+alias s=showmarks
+alias j=jump
+alias b=bookmark
+alias dm=deletemark
+
+# Advanced customization of fzf options via _fzf_comprun function
+# - The first argument to the function is the name of the command.
+# - You should make sure to pass the rest of the arguments to fzf.
+_fzf_comprun() {
+  local command=$1
+  shift
+
+  case "$command" in
+    cd)           fzf --preview 'tree -C {} | head -200'   "$@" ;;
+    export|unset) fzf --preview "eval 'echo \$'{}"         "$@" ;;
+    ssh)          fzf --preview 'dig {}'                   "$@" ;;
+    *)            fzf --preview 'bat -n --color=always {}' "$@" ;;
+  esac
+}
+
+_fzf_complete_npm() {
+    _fzf_complete --multi --reverse --preview '' --prompt="npm run> " -- "npm run " < <(
+        cat package.json | jq -r '.scripts | keys[]'
+    )
+}
+
+_fzf_complete_pnpm() {
+    _fzf_complete --multi --reverse --preview '' --prompt="pnpm run> " -- "pnpm run " < <(
+        cat package.json | jq -r '.scripts | keys[]'
+    )
+}
+
+function eip() {
+    glow "https://raw.githubusercontent.com/ethereum/EIPs/master/EIPS/eip-$1.md" -w `tput cols`
+}
+
+source ~/.dotfiles/fzf-git.sh
+
+function gch() {
+  local selected=$(_fzf_git_each_ref --no-multi)
+  [ -n "$selected" ] && git checkout "$selected"
+}

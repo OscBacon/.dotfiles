@@ -20,6 +20,9 @@ source $HOME/.local/bin/virtualenvwrapper.sh
 export PNPM_HOME="$HOME/.local/share/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 
+# yarn
+export PATH="/home/baracoso/.yarn/bin:$PATH"
+
 # Go
 export PATH="$PATH:/usr/local/go/bin:$HOME/go/bin"
 
@@ -28,8 +31,8 @@ export PATH="$PATH:/usr/local/go/bin:$HOME/go/bin"
 export PYTHONDONTWRITEBYTECODE=1
 
 # Ruby gems
-export GEM_HOME="~/.gem"
-export GEM_PATH="~/.gem"
+export GEM_HOME="$HOME/.gem"
+export GEM_PATH="$HOME/.gem"
 export PATH="$PATH:$HOME/.gem/bin"
 
 # krew
@@ -37,3 +40,6 @@ export PATH="$PATH:$HOME/.cabal/bin:$HOME/.krew/bin"
 
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:$HOME/tools/kubectl-plugins"
+
+export PATH="$PATH:/home/baracoso/.foundry/bin"
+export PATH="$PATH:/snap/bin"
