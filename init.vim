@@ -13,6 +13,7 @@ Plug 'sheerun/vim-polyglot'
 Plug 'Chiel92/vim-autoformat' , { 'on': 'Autoformat' }
 " Plug 'psf/black', { 'on': 'Black' }
 " Plug 'ervandew/supertab'
+" Themes
 Plug 'crusoexia/vim-monokai'
 Plug 'tomasr/molokai'
 Plug 'joshdick/onedark.vim'
@@ -20,6 +21,7 @@ Plug 'rakr/vim-one'
 Plug 'kaicataldo/material.vim'
 Plug 'rebelot/kanagawa.nvim'
 Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
+Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 " Plug 'fisadev/vim-isort'
 Plug 'haya14busa/is.vim'
 Plug 'airblade/vim-gitgutter'
@@ -70,6 +72,10 @@ Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 Plug 'tpope/vim-dotenv'
 " DB
 Plug 'tpope/vim-dadbod'
+" Colors in CSS files
+Plug 'ap/vim-css-color'
+" Typescript
+Plug 'HerringtonDarkholme/yats.vim'
 call plug#end()
 
 filetype plugin indent on
@@ -86,7 +92,7 @@ set expandtab
 set backspace=eol,start,indent
 set ruler
 
-au BufNewFile,BufRead *.js
+au BufNewFile,BufRead *.js,*.json
             \ set tabstop=2 |
             \ set softtabstop=2 |
             \ set shiftwidth=2 |
@@ -121,11 +127,20 @@ augroup filetype_jsx
     autocmd!
     autocmd FileType javascript set filetype=javascriptreact
 augroup END
+autocmd BufWritePre *.ts,*.js :silent Prettier
+" autocmd BufWritePre *.ts,*.js :silent CocCommand editor.action.formatDocument
 
 " Settings for go files
 au BufNewFile,BufRead *.go
             \ setlocal noexpandtab tabstop=4 shiftwidth=4 softtabstop=4
 autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
+
+au BufNewFile,BufRead *.yaml
+            \ set tabstop=2 |
+            \ set softtabstop=2 |
+            \ set shiftwidth=2 |
+            \ set fileformat=unix |
+autocmd BufWritePre *.yaml :silent Prettier
 
 " autocmd FileType go autocmd BufWritePre <buffer> Autoformat
 
@@ -193,7 +208,6 @@ let g:coc_global_extensions = [
 " \ 'coc-jedi',
 
 let python_highlight_all=1
-syntax on
 
 set clipboard+=unnamedplus
 
@@ -225,7 +239,8 @@ let g:onedark_terminal_italics=1
 let g:one_allow_italics = 1
 let g:tokyonight_style = "storm"
 let g:tokyonight_italic_functions = 1
-colorscheme kanagawa
+" colorscheme kanagawa
+colorscheme catppuccin_mocha
 " colorscheme tokyonight
 hi Normal guibg=NONE ctermbg=NONE
 
@@ -254,6 +269,9 @@ nmap <silent> ]g <Plug>(coc-diagnostic-next)
 nmap <leader>ac  <Plug>(coc-codeaction)
 " Apply AutoFix to problem on the current line.
 nmap <leader>qf  <Plug>(coc-fix-current)
+" Fix all issues in document
+nmap <leader>qa :CocCommand tsserver.executeAutofix<CR>
+nmap <leader>qi :CocCommand editor.action.organizeImport<CR>
 
 " Applying codeAction to the selected region.
 " Example: `<leader>aap` for current paragraph
@@ -278,7 +296,8 @@ let g:NERDCommentEmptyLines = 1
 let g:NERDTrimTrailingWhitespace = 1
 
 " NerdTree Git Plugin
-let g:NERDTreeGitStatusConcealBrackets = 1 " default: 0
+let g:NERDTreeGitStatusUseNerdFonts = 1
+" let g:NERDTreeGitStatusConcealBrackets = 1 " default: 0
 
 for f in split(glob('~/.config/nvim/config/*.vim'), '\n')
     exe 'source' f
@@ -297,8 +316,9 @@ let g:netrw_browsex_viewer="cmd.exe /C start"
 "   augroup END
 " end
 
+" \ 'colorscheme': 'one',
 let g:lightline = {
-    \ 'colorscheme': 'one',
+    \ 'colorscheme': 'catppuccin_mocha',
     \ 'active': {
     \   'left': [ [ 'mode', 'paste' ], 
     \             [ 'gitbranch', 'readonly', 'relativepath', 'modified' ] ],
@@ -318,10 +338,6 @@ nmap <leader>S :Sexplore<cr>
 
 set foldmethod=syntax
 set foldlevelstart=20
-
-" NERDTree
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | Explore | endif
 
 set t_ut=""
 
@@ -368,6 +384,7 @@ nnoremap <F2> :Goyo<CR>
 " nnoremap <silent> <leader>f :Files<CR>
 " Open files, ignore .gitignore files
 nnoremap <expr> <leader>f (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<cr>"
+nnoremap <silent> <leader>F :Files<CR>
 nnoremap <silent> <leader>b :Buffer<CR>
 nnoremap <silent> <leader>l :Lines<CR>
 nnoremap <silent> <leader>r :Rg!<CR>
@@ -447,3 +464,13 @@ let g:go_highlight_variable_assignments = 1
 
 " CamelCaseMotion
 let g:camelcasemotion_key = ','
+
+syntax on
+
+" Startup command
+" NERDTree
+" autocmd StdinReadPre * let s:std_in=1
+" autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | Explore | endif
+if empty(argv())
+    NERDTree
+endif

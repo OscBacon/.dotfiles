@@ -3,19 +3,47 @@
         "haskell": {
             "command": "haskell-language-server-wrapper",
             "args": ["--lsp"],
-            "rootPatterns": ["*.cabal", "stack.yaml", "cabal.project", "package.yaml", "hie.yaml"],
+            "rootPatterns": [
+                "*.cabal",
+                "stack.yaml",
+                "cabal.project",
+                "package.yaml",
+                "hie.yaml"
+            ],
             "filetypes": ["haskell", "lhaskell"]
-        }
+        },
+        "graphql": {
+            "command": "graphql-lsp",
+            "args": ["server", "-m", "stream"],
+            // customize filetypes to your needs
+            //"filetypes": ["typescript", "typescriptreact", "graphql"],
+            "filetypes": ["graphql"],
+            "settings": {
+                "graphql-config.load.legacy": true
+            }
+        },
         //},
         //"golang": {
-            //  "command": "gopls",
-            //  "rootPatterns": ["go.work", "go.mod", ".vim/", ".git/", ".hg/"],
-            //  "filetypes": ["go"],
-            //  "initializationOptions": {
-                //    "completeUnimported": true,
-                //    "usePlaceholders": true
-                //  }
-                //}
+        //  "command": "gopls",
+        //  "rootPatterns": ["go.work", "go.mod", ".vim/", ".git/", ".hg/"],
+        //  "filetypes": ["go"],
+        //  "initializationOptions": {
+        //    "completeUnimported": true,
+        //    "usePlaceholders": true
+        //  }
+        //}
     },
-    "coc.preferences.formatOnSaveFiletypes": ["go", "python", "typescript", "javascript"]
+    "yaml.schemas": {
+        "/values.schema.json": ["values.yaml"],
+        "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/reference.json": ["serverless.yml", "serverless.yaml"],
+        "kubernetes": ["/*.yaml", "/*.yml"]
+    },
+    "solidity.remapping": {
+        "@openzeppelin/": "./node_modules/@openzeppelin/"
+    },
+    "solidity.includePath": "node_modules",
+    "coc.preferences.formatOnSaveFiletypes": [
+        "go",
+        "python",
+    ]
 }
