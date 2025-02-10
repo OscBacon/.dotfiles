@@ -82,6 +82,7 @@ plugins=(
     npm
     yarn
     zshmarks
+    zfm
 )
 
 
@@ -167,7 +168,7 @@ pods() {
   FZF_DEFAULT_COMMAND="kubectl get pods --all-namespaces" \
     fzf --info=inline --layout=reverse --header-lines=1 \
         --prompt "$(kubectl config current-context | sed 's/-context$//')> " \
-        --header "$OWL ╱ Enter (kubectl exec) ╱ CTRL-O (less log) ╱ CTRL-R (reload) ╱ CTRL-D (describe) / CTRL-W (delete) / CTRL-T (tail)" \
+        --header "$OWL ╱ Enter (kubectl exec) ╱ CTRL-O (less log) ╱ CTRL-R (reload) ╱ CTRL-D (describe) / CTRL-W (delete) / CTRL-T (tail) / CTRL-E (tail errors)" \
         --bind 'ctrl-/:change-preview-window(wrap|)' \
         --bind 'enter:execute:kubectl exec -it --namespace {1} {2} -- sh > /dev/tty' \
         --bind 'ctrl-o:execute:kubectl logs --all-containers --namespace {1} {2} | less' \
@@ -175,6 +176,7 @@ pods() {
         --bind 'ctrl-d:execute:kubectl describe pod --namespace {1} {2} | less' \
         --bind 'ctrl-w:execute:kubectl delete pod --namespace {1} {2}' \
         --bind 'ctrl-t:execute:kubectl logs --follow --tail=0 --namespace {1} {2}' \
+        --bind 'ctrl-e:execute:kubectl logs --follow --tail=0 --namespace {1} {2} | grep "level\":\"\(error\|crit\)\""' \
         --preview-window up:follow \
         --preview 'kubectl logs --follow --all-containers --tail=10000 --namespace {1} {2}' "$@" \
 
@@ -198,10 +200,22 @@ function cheat { curl cheat.sh/$1 }
 alias nrs="npm run serve"
 alias nrt="npm run test"
 alias nrb="npm run build"
+alias nrbf="npm run build --force"
+alias nrl="npm run lint"
+alias nrbw="npm run build:watch"
 alias nr="npm run"
+
+alias p="pnpm"
+
+# Run vitest watch with all file arguments
+function prfvw() {
+    # ${*} => pass all arguments as a single entity, without string separation
+    pnpm run firebase:exec "vitest --watch ${*}"
+}
 
 alias guv="git add -uv"
 alias gcan="git commit --amend --no-edit"
+alias gpms="gh pr merge --squash --delete-branch"
 # Override this alias from OMZ because it's too dangerous
 alias gcan!=gcan
 
@@ -265,7 +279,7 @@ function fppvi {
 }
 
 # Edit modified git files
-alias em="git status | grep modified | fpp -a -c 'nvim -p' -e 'ENTER'"
+alias em="git status | grep 'modified\|new file' | fpp -a -c 'nvim -p' -e 'ENTER'"
 
 # export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/lib/x86_64-linux-gnu/:/home/linuxbrew/.linuxbrew/Homebrew/lib"
 alias ctop='TERM="${TERM/#tmux/screen}" ctop'
@@ -273,9 +287,6 @@ alias ctop='TERM="${TERM/#tmux/screen}" ctop'
 function ymerge {
      yq ea '. as $item ireduce ({}; . * $item )' ${@:1}
 }
-
-# JQ
-export JQ_COLORS="7;31"
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /home/linuxbrew/.linuxbrew/Homebrew/Cellar/mc/RELEASE.2023-01-28T20-29-38Z_1/bin/mc mc
@@ -304,20 +315,27 @@ _fzf_comprun() {
 }
 
 _fzf_complete_npm() {
-    _fzf_complete --multi --reverse --preview '' --prompt="npm run> " -- "npm run " < <(
+    _fzf_complete --multi --reverse --preview '' --prompt="npm run> " -- "$@" < <(
         cat package.json | jq -r '.scripts | keys[]'
     )
 }
 
 _fzf_complete_pnpm() {
-    _fzf_complete --multi --reverse --preview '' --prompt="pnpm run> " -- "pnpm run " < <(
+    _fzf_complete --multi --reverse --preview '' --prompt="pnpm run> " -- "$@" < <(
         cat package.json | jq -r '.scripts | keys[]'
     )
 }
 
+# Markdown
 function eip() {
     glow "https://raw.githubusercontent.com/ethereum/EIPs/master/EIPS/eip-$1.md" -w `tput cols`
 }
+
+function erc() {
+    glow "https://raw.githubusercontent.com/ethereum/ERCs/master/ERCS/erc-$1.md" -w `tput cols`
+}
+
+alias gloww="glow -w `tput cols`"
 
 source ~/.dotfiles/fzf-git.sh
 
@@ -325,3 +343,16 @@ function gch() {
   local selected=$(_fzf_git_each_ref --no-multi)
   [ -n "$selected" ] && git checkout "$selected"
 }
+
+# Override aliases
+alias vimdiff='nvim -d'
+
+# Add sed to remove Windows newlines
+alias wslpaste="powershell.exe Get-Clipboard | sed 's/\r//'"
+
+# Autocompletions
+source <(jwt completion bash)
+source <(gh completion -s zsh)
+eval "$(gh copilot alias -- zsh)"
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"

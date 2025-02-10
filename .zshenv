@@ -14,7 +14,8 @@ export EDITOR=nvim
 # export TERM="xterm-256color"
 export WORKON_HOME=$HOME/Envs
 export VIRTUALENVWRAPPER_PYTHON=/home/linuxbrew/.linuxbrew/Homebrew/bin/python3
-source $HOME/.local/bin/virtualenvwrapper.sh
+# source $HOME/.local/bin/virtualenvwrapper.sh
+source /home/linuxbrew/.linuxbrew/Homebrew/bin/virtualenvwrapper.sh
 
 # pnpm
 export PNPM_HOME="$HOME/.local/share/pnpm"
@@ -43,3 +44,9 @@ export PATH="$PATH:$HOME/tools/kubectl-plugins"
 
 export PATH="$PATH:/home/baracoso/.foundry/bin"
 export PATH="$PATH:/snap/bin"
+. "$HOME/.cargo/env"
+
+# JQ
+export JQ_COLORS="7;31"
+
+export PATH="$PATH:/opt/nvim/"

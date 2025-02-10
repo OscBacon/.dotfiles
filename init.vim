@@ -1,18 +1,14 @@
-filetype off
 set nocompatible
+filetype off
 
 call plug#begin('~/.local/share/nvim/plugged')
 Plug 'vim-scripts/indentpython.vim'
-" Plug 'nvie/vim-flake8'
 Plug 'jparise/vim-graphql'
 Plug 'posva/vim-vue'
-Plug 'pangloss/vim-javascript'
-Plug 'leafgarland/typescript-vim'
-Plug 'elixir-editors/vim-elixir'
+" Plug 'pangloss/vim-javascript'
+" Plug 'leafgarland/typescript-vim'
 Plug 'sheerun/vim-polyglot'
 Plug 'Chiel92/vim-autoformat' , { 'on': 'Autoformat' }
-" Plug 'psf/black', { 'on': 'Black' }
-" Plug 'ervandew/supertab'
 " Themes
 Plug 'crusoexia/vim-monokai'
 Plug 'tomasr/molokai'
@@ -24,7 +20,8 @@ Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 " Plug 'fisadev/vim-isort'
 Plug 'haya14busa/is.vim'
-Plug 'airblade/vim-gitgutter'
+" Plug 'airblade/vim-gitgutter'
+Plug 'lewis6991/gitsigns.nvim'
 Plug 'rhysd/committia.vim'
 " Vim
 Plug 'tpope/vim-fugitive'
@@ -35,8 +32,10 @@ Plug 'itchyny/lightline.vim'
 Plug 'AndrewRadev/splitjoin.vim' " Join: gJ, split: gS
 "Plug 'elubow/cql-vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'josa42/vim-lightline-coc'
 
 Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
+Plug 'nvim-treesitter/nvim-treesitter', { 'do': 'TSUpdate' }
 
 " Plug 'ngemily/vim-vp4'
 Plug 'connorholyday/vim-snazzy'
@@ -47,21 +46,24 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 " Zen mode
 Plug 'junegunn/goyo.vim'
 
-Plug 'numirias/semshi', { 'do': ':UpdateRemotePlugins' }
+" Plug 'numirias/semshi', { 'do': ':UpdateRemotePlugins' }
 Plug 'plasticboy/vim-markdown'
 
 " LSP
-" Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'neovim/nvim-lspconfig'
 
 " Kube / Helm
 Plug 'towolf/vim-helm'
 " Solidity
 Plug 'TovarishFin/vim-solidity'
+" MDX 
+Plug 'davidmh/mdx.nvim', {'branch': 'main'}
 " Go
 " Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'luochen1990/rainbow'
 " Icons
-" Plug 'kyazdani42/nvim-web-devicons'
+Plug 'kyazdani42/nvim-web-devicons'
 " Plug 'ryanoasis/vim-devicons'
 Plug 'bkad/CamelCaseMotion'
 " Indent select
@@ -74,14 +76,40 @@ Plug 'tpope/vim-dotenv'
 Plug 'tpope/vim-dadbod'
 " Colors in CSS files
 Plug 'ap/vim-css-color'
-" Typescript
-Plug 'HerringtonDarkholme/yats.vim'
+" Plug 'pmizio/typescript-tools.nvim'
+" Firestore
+Plug 'delphinus/vim-firestore'
+" Markdown preview
+Plug '0x00-ketsu/markdown-preview.nvim'
+" Window management
+" Plug 'nvim-focus/focus.nvim'
+" Fancy search and replace
+Plug 'nvim-pack/nvim-spectre'
+" TODOs
+Plug 'folke/todo-comments.nvim'
+" Error translation
+Plug 'dmmulroy/ts-error-translator.nvim'
+" Breadcrumbs
+Plug 'Bekaboo/dropbar.nvim'
+" UI
+Plug 'stevearc/dressing.nvim'
+" Color preview
+Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
+"
+Plug 'stevearc/aerial.nvim'
+" Diff view 
+Plug 'sindrets/diffview.nvim'
+" Liveshare
+Plug 'azratul/live-share.nvim'
+Plug 'jbyuki/instant.nvim'
+" Copilot
+Plug 'github/copilot.vim'
 call plug#end()
 
 filetype plugin indent on
 
 set number
-set relativenumber
+" set relativenumber
 
 set autoindent smartindent
 set smarttab
@@ -91,6 +119,9 @@ set softtabstop=4
 set expandtab
 set backspace=eol,start,indent
 set ruler
+
+" let mapleader="\\"
+let mapleader=" "
 
 au BufNewFile,BufRead *.js,*.json
             \ set tabstop=2 |
@@ -144,8 +175,12 @@ autocmd BufWritePre *.yaml :silent Prettier
 
 " autocmd FileType go autocmd BufWritePre <buffer> Autoformat
 
-let g:ycm_autoclose_preview_window_after_completion=1
-map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+" let g:ycm_autoclose_preview_window_after_completion=1
+" map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+"
+" Markdown
+map <leader>m  :MPToggle<CR>
+map <leader>M  :MPRefresh<CR>
 
 " Coc settings
 call coc#config('python', {
@@ -154,15 +189,15 @@ call coc#config('python', {
 
 call coc#config('languageserver', {
             \ 'racket': {
-                \   'command': 'racket',
-                \   'args': [
-                    \     '--lib',
-                    \     'racket-langserver'
-                    \   ],
-                    \   'filetypes': [
-                        \     'scheme'
-                        \   ]
-                        \ }})
+            \   'command': 'racket',
+            \   'args': [
+            \     '--lib',
+            \     'racket-langserver'
+            \   ],
+            \   'filetypes': [
+            \     'scheme'
+            \   ]
+            \ }})
 
 " call coc#config('signature', { 'preferShownAbove': v:false })
 
@@ -179,6 +214,9 @@ inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 " <C-g>u breaks current undo, please make your own choice.
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
             \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+" Fixes autcompletion on multiline
+autocmd User visual_multi_mappings  imap <buffer><expr> <CR> coc#pum#visible() ? "\<C-Y>" : "\<Plug>(VM-I-Return)"
 
 function! CheckBackspace() abort
     let col = col('.') - 1
@@ -219,6 +257,9 @@ inoremap <C-k> <Esc>:m .-2<CR>==gi
 vnoremap <C-j> :m '>+1<CR>gv=gv
 vnoremap <C-k> :m '<-2<CR>gv=gv
 
+nnoremap <C-S> :%s/
+vnoremap <C-S> :s/
+
 inoremap <A-\> λ
 inoremap <A-a> α
 
@@ -233,15 +274,32 @@ set smartcase
 " Interface
 set noshowmode
 
+" \ 'colorscheme': 'one',
+" \ 'colorscheme': 'catppuccin_mocha',
+let g:lightline = {
+            \ 'colorscheme': 'one',
+            \ 'active': {
+            \   'left': [ [ 'mode', 'paste' ],
+            \             [  'coc_info', 'coc_hints', 'coc_errors', 'coc_warnings', 'coc_ok' ], 
+            \             [ 'gitbranch','readonly', 'relativepath', 'modified' ] ],
+            \ },
+            \ 'component_function': {
+            \   'gitbranch': 'FugitiveHead'
+            \ },
+            \ }
+
+" register compoments:
+call lightline#coc#register()
+
 set termguicolors
 set background=dark
 let g:onedark_terminal_italics=1
 let g:one_allow_italics = 1
 let g:tokyonight_style = "storm"
 let g:tokyonight_italic_functions = 1
-" colorscheme kanagawa
-colorscheme catppuccin_mocha
-" colorscheme tokyonight
+" colorscheme catppuccin_mocha
+" colorscheme molokai
+colorscheme kanagawa
 hi Normal guibg=NONE ctermbg=NONE
 
 " Allow more memory to draw syntax in longer files
@@ -250,6 +308,16 @@ set maxmempattern=50000
 let g:python3_host_prog = expand('~/Envs/dev/bin/python')
 
 let g:rainbow_active = 1
+
+let g:copilot_filetypes = {
+    \ 'dotenv': v:false,
+    \ 'yaml': v:false,
+    \ 'sh': v:false,
+    \ }
+
+" If running ollama-copilot
+" let g:copilot_proxy = 'http://localhost:11435'
+" let g:copilot_proxy_strict_ssl = v:false
 
 " CoC extensions
 let g:coc_global_extensions = ['coc-tsserver']
@@ -260,6 +328,7 @@ nmap <silent> gs :call CocAction('jumpDefinition', 'tabe')<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+nmap <silent> gD <Plug>(coc-declaration)
 
 " Use `[g` and `]g` to navigate diagnostics
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
@@ -273,20 +342,22 @@ nmap <leader>qf  <Plug>(coc-fix-current)
 nmap <leader>qa :CocCommand tsserver.executeAutofix<CR>
 nmap <leader>qi :CocCommand editor.action.organizeImport<CR>
 
+nmap <leader>qr :CocCommand document.renameCurrentWord<CR>
+
 " Applying codeAction to the selected region.
 " Example: `<leader>aap` for current paragraph
 xmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>a  <Plug>(coc-codeaction-selected)
-"
-" Use K to show documentation in preview window
+
+" Show documentation in preview window
 nnoremap <leader>s :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
+    if (index(['vim','help'], &filetype) >= 0)
+        execute 'h '.expand('<cword>')
+    else
+        call CocActionAsync('doHover')
+    endif
 endfunction
 
 " NerdCommenter
@@ -303,7 +374,7 @@ for f in split(glob('~/.config/nvim/config/*.vim'), '\n')
     exe 'source' f
 endfor
 
-" Settings for WSL 
+" Settings for WSL
 " Open GBrowse links with host browser
 let g:netrw_browsex_viewer="cmd.exe /C start"
 
@@ -315,18 +386,6 @@ let g:netrw_browsex_viewer="cmd.exe /C start"
 "     autocmd TextYankPost * call system('echo '.shellescape(join(v:event.regcontents, "\<CR>")).' | '.s:clip)
 "   augroup END
 " end
-
-" \ 'colorscheme': 'one',
-let g:lightline = {
-    \ 'colorscheme': 'catppuccin_mocha',
-    \ 'active': {
-    \   'left': [ [ 'mode', 'paste' ], 
-    \             [ 'gitbranch', 'readonly', 'relativepath', 'modified' ] ],
-    \ },
-    \ 'component_function': {
-    \   'gitbranch': 'FugitiveHead'
-    \ },
-    \ }
 
 " Enable mouse
 set mouse=a
@@ -354,11 +413,16 @@ function! ToggleLight()
     " if g:colors_name == "onedark"
     if &background == "dark"
         set background=light
+        let g:lightline.colorscheme = 'solarized'
         colorscheme one
     else
+        let g:lightline.colorscheme = 'one'
         set background=dark
-        colorscheme one
+        colorscheme kanagawa
     endif
+    call lightline#init()
+    call lightline#colorscheme()
+	call lightline#update()
     hi Normal guibg=NONE ctermbg=NONE
 
 endfunction
@@ -383,7 +447,9 @@ nnoremap <F2> :Goyo<CR>
 " Fzf
 " nnoremap <silent> <leader>f :Files<CR>
 " Open files, ignore .gitignore files
-nnoremap <expr> <leader>f (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<cr>"
+" nnoremap <expr> <leader>f (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached --recurse-submodules')."\<cr>"
+" --recurse-submodules not supported with --others
+nnoremap <expr> <leader>f (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --recurse-submodules --cached')."\<cr>"
 nnoremap <silent> <leader>F :Files<CR>
 nnoremap <silent> <leader>b :Buffer<CR>
 nnoremap <silent> <leader>l :Lines<CR>
@@ -434,8 +500,8 @@ let g:vista_default_executive = 'coc'
 let g:vista_sidebar_width = 50
 
 let g:vista_executive_for = {
-  \ 'go': 'ctags',
-  \ }
+            \ 'go': 'ctags',
+            \ }
 
 " Tagbar
 " let g:tagbar_type_typescript = {
@@ -462,6 +528,19 @@ let g:go_highlight_function_parameters = 1
 let g:go_highlight_variable_declarations = 1
 let g:go_highlight_variable_assignments = 1
 
+" function! TwiddleCase(str)
+"   if a:str ==# toupper(a:str)
+"     let result = tolower(a:str)
+"   elseif a:str ==# tolower(a:str)
+"     let result = substitute(a:str,'\(\<\w\+\>\)', '\u\1', 'g')
+"   else
+"     let result = toupper(a:str)
+"   endif
+"   return result
+" endfunction
+" vnoremap ~ y:call setreg('', TwiddleCase(@"), getregtype(''))<CR>gv""Pgv
+vnoremap ~ :s/\(\<\w\+\>\)/\u\1/g<CR>:noh<CR>
+
 " CamelCaseMotion
 let g:camelcasemotion_key = ','
 
@@ -474,3 +553,115 @@ syntax on
 if empty(argv())
     NERDTree
 endif
+
+" Git
+lua << EOF
+require('gitsigns').setup{
+  on_attach = function(bufnr)
+    local gs = package.loaded.gitsigns
+
+    local function map(mode, l, r, opts)
+      opts = opts or {}
+      opts.buffer = bufnr
+      vim.keymap.set(mode, l, r, opts)
+    end
+
+    -- Navigation
+    map('n', ']c', function()
+      if vim.wo.diff then return ']c' end
+      vim.schedule(function() gs.next_hunk() end)
+      return '<Ignore>'
+    end, {expr=true})
+
+    map('n', '[c', function()
+      if vim.wo.diff then return '[c' end
+      vim.schedule(function() gs.prev_hunk() end)
+      return '<Ignore>'
+    end, {expr=true})
+
+    map('n', '<leader>hs', gs.stage_hunk)
+    map('n', '<leader>hr', gs.reset_hunk)
+    map('n', '<leader>hp', gs.preview_hunk)
+    map('n', '<leader>hb', function() gs.blame_line{full=true} end)
+    end
+}
+EOF
+
+lua << EOF
+-- Treesitter
+require("nvim-treesitter.configs").setup({
+    ensure_installed = "all",
+    highlight = { enable = true },
+    indent = { enable = true },
+    autotag = { enable = true, enable_close_on_slash = false },
+})
+EOF
+
+lua require("mdx").setup()
+" TODOs
+lua require("todo-comments").setup()
+" Error translation
+lua require("ts-error-translator").setup()
+lua require("dropbar").setup()
+" Typescript lsp
+" lua require("typescript-tools").setup()
+"
+" lua require("markdown-preview").setup()
+lua << EOF
+require("markdown-preview").setup(
+    {
+      glow = {
+        -- When find executable path of `glow` failed (from PATH), use this value instead
+        exec_path = '',
+        style = '', -- Path to glamour JSON style file
+      },
+      -- Markdown preview term
+      term = {
+        -- reload term when rendered markdown file changed
+        reload = {
+          enable = true,
+          events = {'InsertLeave', 'TextChanged'},
+        },
+        direction = 'vertical', -- choices: vertical / horizontal
+        keys = {
+        close = {'q', '<Esc>'},
+        refresh = 'r',
+        }
+      }
+    }
+)
+
+require("live-share").setup({
+    port_internal = 9876, -- The local port to be used for the live share connection
+    max_attempts = 20, -- Maximum number of attempts to read the URL from service(serveo.net or localhost.run), every 250 ms
+    service_url = "/tmp/service.url", -- Path to the file where the URL from serveo.net will be stored
+    service = "nokey@localhost.run", -- Service to use, options are serveo.net or localhost.run
+})
+
+require("aerial").setup({
+  -- optionally use on_attach to set keymaps when aerial has attached to a buffer
+  on_attach = function(bufnr)
+    -- Jump forwards/backwards with '{' and '}'
+    vim.keymap.set("n", "{", "<cmd>AerialPrev<CR>", { buffer = bufnr })
+    vim.keymap.set("n", "}", "<cmd>AerialNext<CR>", { buffer = bufnr })
+  end,
+  filter_kind = {
+    "Class",
+    "Constructor",
+    "Enum",
+    "Function",
+    "Interface",
+    "Module",
+    "Method",
+    "Struct",
+    "Event",
+  },
+})
+
+-- You probably also want to set a keymap to toggle aerial
+vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>")
+EOF
+
+" Fuzzy find document symbols
+nmap <silent> <leader>ds <cmd>call aerial#fzf()<cr>
+

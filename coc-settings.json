@@ -36,14 +36,23 @@
     "yaml.schemas": {
         "/values.schema.json": ["values.yaml"],
         "https://raw.githubusercontent.com/lalcebo/json-schema/master/serverless/reference.json": ["serverless.yml", "serverless.yaml"],
-        "kubernetes": ["/*.yaml", "/*.yml"]
+        "kubernetes": ["kubernetes.yaml", "kubernetes.yml"]
     },
-    "solidity.remapping": {
-        "@openzeppelin/": "./node_modules/@openzeppelin/"
+    "yaml.schemaStore.enable": true,
+    "typescript.referencesCodeLens.enabled": true,
+    "[typescript][go][python][typescriptreact]": {
+        "coc.preferences.formatOnSave": true
     },
-    "solidity.includePath": "node_modules",
-    "coc.preferences.formatOnSaveFiletypes": [
-        "go",
-        "python",
-    ]
+    "solidity.includePath": "./node_modules",
+    /* Allow all paths */
+    "solidity.allowPaths": ["/"],
+    "typescript.preferences.importModuleSpecifierEnding": "js",
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "diagnostic.virtualTextCurrentLineOnly": true,
+    "diagnostic.virtualText": true,
+    "diagnostic.virtualTextLimitInOneLine": 1,
+    "diagnostic.errorSign": "E",
+    "diagnostic.infoSign": "I",
+    "diagnostic.hintSign": "H",
+    "@nomicfoundation/coc-solidity.telemetry": true
 }

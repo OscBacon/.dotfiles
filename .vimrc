@@ -83,7 +83,7 @@ vnoremap <C-k> :m '<-2<CR>gv=gv
 
 set incsearch
 
-colorscheme monokai
+colorscheme molokai
 
 let g:lightline = {
       \ 'colorscheme': 'onedark',

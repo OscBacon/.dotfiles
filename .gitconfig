@@ -1,11 +1,11 @@
 [user]
     email = oscar.baracos@gmail.com
     name = Oscar Baracos
-    signingkey = D464F2B4010E4663
-[gpg]
-    program = gpg
-[commit]
-    gpgsign = true
+;     signingkey = D464F2B4010E4663
+; [gpg]
+;     program = gpg
+; [commit]
+;     gpgsign = true
 [push]
     default = simple
 [alias]
@@ -24,3 +24,7 @@
     helper = store
 [core]
     autocrlf = input
+[http]
+	postBuffer = 157286400
+[diff]
+    tool = nvimdiff
