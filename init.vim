@@ -22,6 +22,8 @@ Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 Plug 'haya14busa/is.vim'
 " Plug 'airblade/vim-gitgutter'
 Plug 'lewis6991/gitsigns.nvim'
+" Git conflict markers
+Plug 'rhysd/conflict-marker.vim'
 Plug 'rhysd/committia.vim'
 " Vim
 Plug 'tpope/vim-fugitive'
@@ -34,6 +36,8 @@ Plug 'AndrewRadev/splitjoin.vim' " Join: gJ, split: gS
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'josa42/vim-lightline-coc'
 
+" Formatting
+Plug 'sbdchd/neoformat'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
 Plug 'nvim-treesitter/nvim-treesitter', { 'do': 'TSUpdate' }
 
@@ -57,6 +61,8 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'towolf/vim-helm'
 " Solidity
 Plug 'TovarishFin/vim-solidity'
+" DAML
+Plug 'obsidiansystems/daml.vim'
 " MDX 
 Plug 'davidmh/mdx.nvim', {'branch': 'main'}
 " Go
@@ -104,6 +110,14 @@ Plug 'azratul/live-share.nvim'
 Plug 'jbyuki/instant.nvim'
 " Copilot
 Plug 'github/copilot.vim'
+" Extended substitution
+Plug 'tpope/vim-abolish'
+" AI
+Plug 'olimorris/codecompanion.nvim'
+" Diff
+Plug'nvim-mini/mini.diff'
+" Smart incrementing
+Plug 'monaqa/dial.nvim'
 call plug#end()
 
 filetype plugin indent on
@@ -137,7 +151,7 @@ au BufNewFile,BufRead *.py
             \ set fileformat=unix |
 
 " Settings for haskell files
-au BufNewFile,BufRead *.hs,
+au BufNewFile,BufRead *.hs
             \ set tabstop=2 |
             \ set softtabstop=2 |
             \ set shiftwidth=2 |
@@ -153,25 +167,39 @@ au BufNewFile,BufRead *.exs
 " Setting for verilog files
 au BufNewFile,BufRead *.v,*.vs set syntax=verilog
 
+augroup filetype_daml
+    au BufNewFile,BufRead *.daml
+                \ setlocal tabstop=2 |
+                \ setlocal softtabstop=2 |
+                \ setlocal shiftwidth=2 
+
+    au Filetype daml setlocal tabstop=2 shiftwidth=2 softtabstop=2
+augroup END
+
 " Setting for js / jsx files
 augroup filetype_jsx
     autocmd!
     autocmd FileType javascript set filetype=javascriptreact
 augroup END
-autocmd BufWritePre *.ts,*.js :silent Prettier
-" autocmd BufWritePre *.ts,*.js :silent CocCommand editor.action.formatDocument
+
+autocmd BufWritePre *.ts,*.js,*.yaml,*.tsx :silent Prettier
+autocmd BufWritePre *.sol, :silent Neoformat
+" augroup fmt
+"   autocmd!
+"   autocmd BufWritePre * undojoin | Neoformat
+" augroup END
+
 
 " Settings for go files
 au BufNewFile,BufRead *.go
             \ setlocal noexpandtab tabstop=4 shiftwidth=4 softtabstop=4
-autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
+" autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
 
 au BufNewFile,BufRead *.yaml
             \ set tabstop=2 |
             \ set softtabstop=2 |
             \ set shiftwidth=2 |
             \ set fileformat=unix |
-autocmd BufWritePre *.yaml :silent Prettier
 
 " autocmd FileType go autocmd BufWritePre <buffer> Autoformat
 
@@ -238,12 +266,12 @@ let g:coc_global_extensions = [
             \ 'coc-elixir',
             \ 'coc-yaml',
             \ 'coc-go',
-            \ 'coc-lightbulb',
             \ 'coc-protobuf',
             \ 'coc-clangd',
-            \ 'coc-json'
+            \ 'coc-json',
+            \ 'coc-sh',
+            \ '@nomicfoundation/coc-solidity'
             \ ]
-" \ 'coc-jedi',
 
 let python_highlight_all=1
 
@@ -301,6 +329,11 @@ let g:tokyonight_italic_functions = 1
 " colorscheme molokai
 colorscheme kanagawa
 hi Normal guibg=NONE ctermbg=NONE
+" hi LineNr guibg=NONE ctermbg=NONE
+" hi SignColumn guibg=NONE ctermbg=NONE
+" Display signs in the line numbers columns
+set signcolumn=number
+
 
 " Allow more memory to draw syntax in longer files
 set maxmempattern=50000
@@ -352,6 +385,9 @@ nmap <leader>a  <Plug>(coc-codeaction-selected)
 " Show documentation in preview window
 nnoremap <leader>s :call <SID>show_documentation()<CR>
 
+" Search workspace symbols
+nnoremap <silent><nowait> <leader>S  :<C-u>CocList -I symbols<cr>
+
 function! s:show_documentation()
     if (index(['vim','help'], &filetype) >= 0)
         execute 'h '.expand('<cword>')
@@ -393,7 +429,7 @@ set mouse=a
 nmap <leader>n :NERDTreeToggle<cr>
 nmap <leader>N :NERDTreeFind<cr>
 nmap <leader>t :Texplore<cr>
-nmap <leader>S :Sexplore<cr>
+" nmap <leader>S :Sexplore<cr>
 
 set foldmethod=syntax
 set foldlevelstart=20
@@ -474,8 +510,6 @@ endfunction
 autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
-set pastetoggle=<F6>
-
 let g:ft = ''
 function! NERDCommenter_before()
     if &ft == 'vue'
@@ -554,6 +588,9 @@ if empty(argv())
     NERDTree
 endif
 
+" Copilot needs node 20
+let g:copilot_node_command = "~/.nvm/versions/node/v22.19.0/bin/node"
+
 " Git
 lua << EOF
 require('gitsigns').setup{
@@ -585,9 +622,7 @@ require('gitsigns').setup{
     map('n', '<leader>hb', function() gs.blame_line{full=true} end)
     end
 }
-EOF
 
-lua << EOF
 -- Treesitter
 require("nvim-treesitter.configs").setup({
     ensure_installed = "all",
@@ -595,19 +630,15 @@ require("nvim-treesitter.configs").setup({
     indent = { enable = true },
     autotag = { enable = true, enable_close_on_slash = false },
 })
-EOF
 
-lua require("mdx").setup()
-" TODOs
-lua require("todo-comments").setup()
-" Error translation
-lua require("ts-error-translator").setup()
-lua require("dropbar").setup()
-" Typescript lsp
-" lua require("typescript-tools").setup()
-"
-" lua require("markdown-preview").setup()
-lua << EOF
+require("mdx").setup()
+require("ts-error-translator").setup()
+-- TODOs
+require("todo-comments").setup()
+-- Error translation
+require("ts-error-translator").setup()
+require("dropbar").setup()
+
 require("markdown-preview").setup(
     {
       glow = {
@@ -658,10 +689,135 @@ require("aerial").setup({
   },
 })
 
+require("mini.diff").setup()
+
+require("codecompanion").setup({
+  strategies = {
+    chat = {
+        adapter = "gemini",
+    },
+    inline = {
+        adapter = "gemini",
+    }
+  },
+  gemini = function()
+    return require("codecompanion.adapters").extend("gemini", {
+      schema = {
+        model = {
+          default = "gemini-2.5-flash-preview-05-20"
+        },
+      },
+      env = {
+        api_key = "GEMINI_API_KEY",
+      },
+    })
+  end,
+  --adapters = {
+  --  acp = {
+  --    gemini_cli = function()
+  --      return require("codecompanion.adapters").extend("gemini_cli", {
+  --        defaults = {
+  --            auth_method = "gemini-api-key",
+  --        },
+  --        env = {
+  --          api_key = "GEMINI_API_KEY",
+  --          GEMINI_API_KEY = "GEMINI_API_KEY",
+  --        },
+  --      })
+  --    end,
+  --  },
+  --},
+})
+
 -- You probably also want to set a keymap to toggle aerial
 vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>")
+
+-- Copilot setup.
+-- vim.g.copilot_no_tab_map = true
+vim.g.copilot_assume_mapped = true
+-- -- Accept the current completion with Ctrl-].
+-- vim.keymap.set('i', '<C-]>', 'copilot#Accept("\\<CR>")', {
+  -- expr = true,
+  -- replace_keycodes = false
+-- })
+-- Accept the current completion word with Ctrl-\.
+vim.keymap.set('i', '<A-.>', '<Plug>(copilot-accept-word)')
+-- Accept the current completion line with Ctrl-|.
+vim.keymap.set('i', '<C-l>', '<Plug>(copilot-accept-line)')
+-- Request a suggestion with Ctrl-.
+-- vim.keymap.set('i', '<C-.>', '<Plug>(copilot-suggest)')
+
+vim.keymap.set({'n', 'v'}, '<leader>c', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true })
+vim.keymap.set({ 'n', 'v' }, '<leader>A', '<cmd>CodeCompanionActions<cr>', { noremap = true, silent = true })
+
+-- Dial.nvim setup
+local augend = require("dial.augend")
+require("dial.config").augends:register_group{
+    default = {
+        augend.integer.alias.hex,
+        augend.date.alias["%d/%m/%Y"],
+        augend.date.alias["%Y-%m-%d"],
+        augend.date.alias["%H:%M"],
+        augend.constant.alias.ja_weekday_full,
+        augend.semver.alias.semver,
+        augend.constant.alias.bool,
+        augend.constant.new{
+            elements = {"and", "or"},
+            word = true, -- if false, "sand" is incremented into "sor", "doctor" into "doctand", etc.
+            cyclic = true,  -- "or" is incremented into "and".
+        },
+        augend.constant.new{
+            elements = {"&&", "||"},
+            word = false,
+            cyclic = true,
+        },
+    },
+}
+
+vim.keymap.set("n", "<C-a>", function()
+    require("dial.map").manipulate("increment", "normal")
+end)
+vim.keymap.set("n", "<C-x>", function()
+    require("dial.map").manipulate("decrement", "normal")
+end)
+vim.keymap.set("n", "g<C-a>", function()
+    require("dial.map").manipulate("increment", "gnormal")
+end)
+vim.keymap.set("n", "g<C-x>", function()
+    require("dial.map").manipulate("decrement", "gnormal")
+end)
+vim.keymap.set("x", "<C-a>", function()
+    require("dial.map").manipulate("increment", "visual")
+end)
+vim.keymap.set("x", "<C-x>", function()
+    require("dial.map").manipulate("decrement", "visual")
+end)
+vim.keymap.set("x", "g<C-a>", function()
+    require("dial.map").manipulate("increment", "gvisual")
+end)
+vim.keymap.set("x", "g<C-x>", function()
+    require("dial.map").manipulate("decrement", "gvisual")
+end)
+
+vim.cmd([[cab cc CodeCompanion]])
 EOF
 
 " Fuzzy find document symbols
 nmap <silent> <leader>ds <cmd>call aerial#fzf()<cr>
+
+" Need to delay because of highlighting setup conflict
+function! HighlightConflictMarker() abort
+    highlight ConflictMarkerBegin guibg=#2f7366
+    highlight ConflictMarkerOurs guibg=#2e5049
+    highlight ConflictMarkerTheirs guibg=#344f69
+    highlight ConflictMarkerEnd guibg=#2f628e
+    highlight ConflictMarkerCommonAncestorsHunk guibg=#754a81
+endfunction
+call timer_start(200, { tid -> execute('call HighlightConflictMarker()') })
+
+au User lsp_setup call lsp#register_server({
+    \ 'name': 'damlc',
+    \ 'cmd': {server_info->['daml', 'damlc', 'ide', '--RTS', '+RTS', '-M6G', '-N']},
+    \ 'whitelist': ['daml'],
+    \ })
 
