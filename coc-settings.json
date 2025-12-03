@@ -1,5 +1,18 @@
 {
     "languageserver": {
+        "daml": {
+          "command": "daml",
+          "args": [
+            "ide"
+          ],
+          "rootPatterns": [
+            "daml.yaml"
+          ],
+          "filetypes": [
+            "daml"
+          ],
+          "initializationOptions": {}
+        },
         "haskell": {
             "command": "haskell-language-server-wrapper",
             "args": ["--lsp"],
@@ -22,6 +35,22 @@
                 "graphql-config.load.legacy": true
             }
         },
+        "solidity": {
+            "command": "nomicfoundation-solidity-language-server",
+            "trace.server": "verbose",
+            "trace.server.format": "json",
+            "args": [
+                "--stdio"
+            ],
+            "filetypes": [
+                "solidity"
+            ],
+            "rootPatterns": [
+                "foundry.toml",
+                "package.json",
+                ".git"
+            ],
+        }
         //},
         //"golang": {
         //  "command": "gopls",
@@ -41,7 +70,7 @@
     "yaml.schemaStore.enable": true,
     "typescript.referencesCodeLens.enabled": true,
     "[typescript][go][python][typescriptreact]": {
-        "coc.preferences.formatOnSave": true
+        "coc.preferences.formatOnSave": false
     },
     "solidity.includePath": "./node_modules",
     /* Allow all paths */
@@ -54,5 +83,24 @@
     "diagnostic.errorSign": "E",
     "diagnostic.infoSign": "I",
     "diagnostic.hintSign": "H",
-    "@nomicfoundation/coc-solidity.telemetry": true
+    "inlayHint.enable": true,
+    "@nomicfoundation/coc-solidity.telemetry": true,
+    "@nomicfoundation/coc-solidity.formatter": "forge",
+    "prettier.onlyUseLocalVersion": true,
+    "eslint.packageManager": "pnpm",
+    /* "eslint.autoFixOnSave": true, */
+    "extensions.updateCheck": "weekly",
+    "workspace.rootPatterns": [
+        ".git",
+        "pnpm-workspace.yaml",
+    ],
+    "tsserver.useLocalTsdk": true,
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    /*"eslint.experimental.useFlatConfig": true,*/
+    "eslint.experimental.useFlatConfig": false,
+    "typescript.preferGoToSourceDefinition": true,
+    "metals.javaHome": "/usr/lib/jvm/java-11-openjdk-amd64/"
+    /*"editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },*/
 }
