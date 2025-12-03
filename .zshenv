@@ -6,16 +6,20 @@ export ZSH="$HOME/.oh-my-zsh"
 export NVM_LAZY=1
 
 # Brew
-export PATH="/home/linuxbrew/.linuxbrew/Homebrew/bin:$PATH"
-export PATH="/home/linuxbrew/.linuxbrew/Homebrew/sbin:$PATH"
+# export PATH="/home/linuxbrew/.linuxbrew/Homebrew/bin:$PATH"
+# export PATH="/home/linuxbrew/.linuxbrew/Homebrew/sbin:$PATH"
+export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+export PATH="/home/linuxbrew/.linuxbrew/sbin:$PATH"
 export HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
+export HOMEBREW_CELLAR=/home/linuxbrew/.linuxbrew/Cellar
 
 export EDITOR=nvim
 # export TERM="xterm-256color"
 export WORKON_HOME=$HOME/Envs
-export VIRTUALENVWRAPPER_PYTHON=/home/linuxbrew/.linuxbrew/Homebrew/bin/python3
+export VIRTUALENVWRAPPER_PYTHON=/home/linuxbrew/.linuxbrew/bin/python3
 # source $HOME/.local/bin/virtualenvwrapper.sh
-source /home/linuxbrew/.linuxbrew/Homebrew/bin/virtualenvwrapper.sh
+source /home/linuxbrew/.linuxbrew/bin/virtualenvwrapper.sh
 
 # pnpm
 export PNPM_HOME="$HOME/.local/share/pnpm"
@@ -45,8 +49,25 @@ export PATH="$PATH:$HOME/tools/kubectl-plugins"
 export PATH="$PATH:/home/baracoso/.foundry/bin"
 export PATH="$PATH:/snap/bin"
 . "$HOME/.cargo/env"
+export PATH="$PATH:/home/baracoso/.daml/bin"
 
 # JQ
 export JQ_COLORS="7;31"
 
 export PATH="$PATH:/opt/nvim/"
+
+export GDK_DPI_SCALE=1.5
+
+export L8547="http://localhost:8547"
+export L8545="http://localhost:8545"
+export L9545="http://localhost:9545"
+export L9546="http://localhost:9546"
+
+# For curl issues in vim
+export XDG_RUNTIME_DIR="/tmp/"
+
+# For colored man pages, with colored-man-pages omz plugin
+export GROFF_NO_SGR=1
+
+source ~/.zshenv.private
+

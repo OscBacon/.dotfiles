@@ -13,35 +13,11 @@ fi
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-# ZSH_THEME="agnoster"
 ZSH_THEME="powerlevel10k/powerlevel10k"
-# ZSH_THEME="none"
-
-# Set list of themes to load
-# Setting this variable when ZSH_THEME=random
-# cause zsh load theme from this variable instead of
-# looking in ~/.oh-my-zsh/themes/
-# An empty array have no effect
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+# ZSH_THEME="agnoster"
 
 # Uncomment the following line to use case-sensitive completion.
 CASE_SENSITIVE="true"
-
-# Uncomment the following line to use hyphen-insensitive completion. Case
-# sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
-
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
 
 # Uncomment the following line to enable command auto-correction.
 # ENABLE_CORRECTION="true"
@@ -89,8 +65,13 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 # You may need to manually set your language environment
-export LANG=en_US.UTF-8
-export LC_CTYPE=en_US.UTF-8
+# export LANG=en_US.UTF-8
+# export LC_CTYPE=en_US.UTF-8
+
+# Tmux 
+# export LC_ALL=en_US.UTF-8
+# export LANG=en_US.UTF-8
+
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -179,14 +160,12 @@ pods() {
         --bind 'ctrl-e:execute:kubectl logs --follow --tail=0 --namespace {1} {2} | grep "level\":\"\(error\|crit\)\""' \
         --preview-window up:follow \
         --preview 'kubectl logs --follow --all-containers --tail=10000 --namespace {1} {2}' "$@" \
-
-        # --bind 'ctrl-/:change-preview-window(80%,border-bottom|80%,border-bottom,wrap|)' \
 }
 
 function encode { echo -n "$1" | base64; }
 
+# Convert hex to decimal
 function hex2dec { printf '%d' $1 } 
-
 # Piped
 function hex2decp { read p; printf '%d' $p } 
 
@@ -207,6 +186,10 @@ alias nr="npm run"
 
 alias p="pnpm"
 
+# DAML
+alias db="daml build"
+alias ds="daml studio"
+
 # Run vitest watch with all file arguments
 function prfvw() {
     # ${*} => pass all arguments as a single entity, without string separation
@@ -216,17 +199,20 @@ function prfvw() {
 alias guv="git add -uv"
 alias gcan="git commit --amend --no-edit"
 alias gpms="gh pr merge --squash --delete-branch"
+alias gpc="gh pr create"
 # Override this alias from OMZ because it's too dangerous
 alias gcan!=gcan
 
-function ef { find -wholename $1 | xargs nvim }
+function ef { fd $1 | xargs nvim }
 
 # Fixes an issue with P10k preventing FPP from working properly
 alias fpp="fpp -ni"
 
 [ -f "~/.ghcup/env" ] && source "~/.ghcup/env" # ghcup-env
 
+# GitHub clone shortcut with full repo name, and optional target directory
 function ghcl { git clone git@github.com:$1.git ${@:2}}
+function ghcl_https { git clone https://github.com/$1.git ${@:2}}
 
 # Vulcan settings
 source ~/.zshrc.vulcan
@@ -247,10 +233,6 @@ function highlight () {
     grep --color=always -E "$1|$" "${@:2}"
 }
 
-# Tmux 
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-
 # zsh history settings
 export HISTSIZE=100000
 export SAVEHIST=$HISTSIZE
@@ -260,6 +242,8 @@ setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
 
 # eksctl
 fpath=($fpath ~/.zsh/completion)
+# daml
+fpath=(~/.daml/zsh $fpath)
 
 ## WSL settings
 if [[ "$(< /proc/version)" == *(Microsoft|WSL)* ]]; then
@@ -274,6 +258,7 @@ if [[ "$(< /proc/version)" == *(Microsoft|WSL)* ]]; then
     export HOST=`ip route show default | awk '{print $3}'`
 fi
 
+# Select in FPP, and open in neovim, in tabs
 function fppvi {
     ${@:1} | fpp -a -c 'nvim -p'
 }
@@ -281,7 +266,7 @@ function fppvi {
 # Edit modified git files
 alias em="git status | grep 'modified\|new file' | fpp -a -c 'nvim -p' -e 'ENTER'"
 
-# export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/lib/x86_64-linux-gnu/:/home/linuxbrew/.linuxbrew/Homebrew/lib"
+# export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/lib/x86_64-linux-gnu/:/home/linuxbrew/.linuxbrew/lib"
 alias ctop='TERM="${TERM/#tmux/screen}" ctop'
 
 function ymerge {
@@ -289,15 +274,14 @@ function ymerge {
 }
 
 autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /home/linuxbrew/.linuxbrew/Homebrew/Cellar/mc/RELEASE.2023-01-28T20-29-38Z_1/bin/mc mc
+complete -o nospace -C /home/linuxbrew/.linuxbrew/Cellar/mc/RELEASE.2023-01-28T20-29-38Z_1/bin/mc mc
 
-# eval "$(starship init zsh)"
-
+# NOTE: Using zfm instead
 # ZSHmarks
-alias s=showmarks
-alias j=jump
-alias b=bookmark
-alias dm=deletemark
+# alias s=showmarks
+# alias j=jump
+# alias b=bookmark
+# alias dm=deletemark
 
 # Advanced customization of fzf options via _fzf_comprun function
 # - The first argument to the function is the name of the command.
@@ -315,13 +299,25 @@ _fzf_comprun() {
 }
 
 _fzf_complete_npm() {
-    _fzf_complete --multi --reverse --preview '' --prompt="npm run> " -- "$@" < <(
+    _fzf_complete --reverse --preview '' --prompt="npm run> " -- "$@" < <(
         cat package.json | jq -r '.scripts | keys[]'
     )
 }
 
 _fzf_complete_pnpm() {
-    _fzf_complete --multi --reverse --preview '' --prompt="pnpm run> " -- "$@" < <(
+    _fzf_complete --reverse --preview '' --prompt="pnpm run> " -- "$@" < <(
+        cat package.json | jq -r '.scripts | keys[]'
+    )
+}
+
+_fzf_complete_p() {
+    _fzf_complete --reverse --preview '' --prompt="pnpm run> " -- "$@" < <(
+        cat package.json | jq -r '.scripts | keys[]'
+    )
+}
+
+_fzf_complete_yarn() {
+    _fzf_complete --reverse --preview '' --prompt="yarn run> " -- "$@" < <(
         cat package.json | jq -r '.scripts | keys[]'
     )
 }
@@ -353,6 +349,10 @@ alias wslpaste="powershell.exe Get-Clipboard | sed 's/\r//'"
 # Autocompletions
 source <(jwt completion bash)
 source <(gh completion -s zsh)
+source <(rg --generate complete-zsh)
 eval "$(gh copilot alias -- zsh)"
+
+autoload -U compinit; compinit
+source ~/.oh-my-zsh/custom/plugins/fzf-tab/fzf-tab.plugin.zsh
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
