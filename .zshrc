@@ -324,14 +324,14 @@ _fzf_complete_yarn() {
 
 # Markdown
 function eip() {
-    glow "https://raw.githubusercontent.com/ethereum/EIPs/master/EIPS/eip-$1.md" -w `tput cols`
+    glow "https://raw.githubusercontent.com/ethereum/EIPs/master/EIPS/eip-$1.md" -w $(tput cols)
 }
 
 function erc() {
-    glow "https://raw.githubusercontent.com/ethereum/ERCs/master/ERCS/erc-$1.md" -w `tput cols`
+    glow "https://raw.githubusercontent.com/ethereum/ERCs/master/ERCS/erc-$1.md" -w $(tput cols)
 }
 
-alias gloww="glow -w `tput cols`"
+alias gloww='glow -w $(tput cols)'
 
 source ~/.dotfiles/fzf-git.sh
 
