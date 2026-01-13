@@ -90,7 +90,7 @@ export ZSH_AUTOSUGGEST_STRATEGY=(completion history)
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias zshconfig="nvim ~/.zshrc"
 
-function weather { curl "wttr.in/$1?m" }
+function weather { curl "wttr.in/$1" ${@:2} }
 
 ## Kubernetes
 alias k=kubectl

@@ -70,7 +70,7 @@ Plug 'davidmh/mdx.nvim', {'branch': 'main'}
 Plug 'luochen1990/rainbow'
 " Icons
 Plug 'kyazdani42/nvim-web-devicons'
-" Plug 'ryanoasis/vim-devicons'
+Plug 'ryanoasis/vim-devicons'
 Plug 'bkad/CamelCaseMotion'
 " Indent select
 Plug 'michaeljsmith/vim-indent-object'
@@ -405,6 +405,18 @@ let g:NERDTrimTrailingWhitespace = 1
 " NerdTree Git Plugin
 let g:NERDTreeGitStatusUseNerdFonts = 1
 " let g:NERDTreeGitStatusConcealBrackets = 1 " default: 0
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+    \ 'Modified'  :'✹',
+    \ 'Staged'    :'✚',
+    \ 'Untracked' :'✭',
+    \ 'Renamed'   :'➜',
+    \ 'Unmerged'  :'═',
+    \ 'Deleted'   :'✖',
+    \ 'Dirty'     :'',
+    \ 'Ignored'   :'☒',
+    \ 'Clean'     :'✔︎',
+    \ 'Unknown'   :'?',
+    \ }
 
 for f in split(glob('~/.config/nvim/config/*.vim'), '\n')
     exe 'source' f
@@ -593,7 +605,7 @@ let g:copilot_node_command = "~/.nvm/versions/node/v22.19.0/bin/node"
 
 " Git
 lua << EOF
-require('gitsigns').setup{
+require('gitsigns').setup({
   on_attach = function(bufnr)
     local gs = package.loaded.gitsigns
 
@@ -621,7 +633,7 @@ require('gitsigns').setup{
     map('n', '<leader>hp', gs.preview_hunk)
     map('n', '<leader>hb', function() gs.blame_line{full=true} end)
     end
-}
+})
 
 -- Treesitter
 require("nvim-treesitter.configs").setup({
@@ -692,6 +704,7 @@ require("aerial").setup({
 require("mini.diff").setup()
 
 require("codecompanion").setup({
+  ignore_warnings = true,
   strategies = {
     chat = {
         adapter = "gemini",
@@ -754,6 +767,7 @@ vim.keymap.set({ 'n', 'v' }, '<leader>A', '<cmd>CodeCompanionActions<cr>', { nor
 local augend = require("dial.augend")
 require("dial.config").augends:register_group{
     default = {
+        augend.integer.alias.decimal,
         augend.integer.alias.hex,
         augend.date.alias["%d/%m/%Y"],
         augend.date.alias["%Y-%m-%d"],
