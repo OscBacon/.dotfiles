@@ -6,12 +6,12 @@ for f in .vimrc .zshrc .p10k.sh .tmux.conf .gitconfig; do
 	ln -s ~/.dotfiles/$f ~/$f
 done
 
-mkdir -p ~/.config/nvim
+mkdir -p ~/.config/nvim/config
 
-mv nvim/config/* ~/.config/nvim/config/
+cp nvim/config/* ~/.config/nvim/config/
 
-ln -s "~/.dotfiles/coc-settings.json" "~/.config/nvim/coc-settings.json"
-ln -s "~/.dotfiles/init.vim" "~/.config/nvim/init.vim"
+ln -s ~/.dotfiles/coc-settings.json ~/.config/nvim/coc-settings.json
+ln -s ~/.dotfiles/init.vim ~/.config/nvim/init.vim
 
 # Oh-my-ZSH & plugins
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
