@@ -356,3 +356,5 @@ autoload -U compinit; compinit
 source ~/.oh-my-zsh/custom/plugins/fzf-tab/fzf-tab.plugin.zsh
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+alias e-no-ai="nvim -u ~/.dotfiles/no-ai.vim"
