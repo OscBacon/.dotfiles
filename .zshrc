@@ -44,6 +44,7 @@ COMPLETION_WAITING_DOTS="true"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     git
+    gh
     virtualenv
     kubectl
     docker
@@ -59,6 +60,9 @@ plugins=(
     yarn
     zshmarks
     zfm
+    gcloud
+    pulumi
+    zsh-claudecode-completion
 )
 
 
@@ -127,9 +131,6 @@ function kcopysecret {
     kubectl get secret $1 -n $2 -o yaml | sed s/"namespace: $2"/"namespace: $3"/| kubectl apply -n $3 -f -
 }
 
-
-# export DISPLAY=:0.0
-export LIBGL_ALWAYS_INDIRECT=1
 
 # FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -203,7 +204,10 @@ alias gpc="gh pr create"
 # Override this alias from OMZ because it's too dangerous
 alias gcan!=gcan
 
-function ef { fd $1 | xargs nvim }
+function ef { fd $1 | xargs nvim -p }
+
+# Docker
+function dsh { docker exec -it $1 bash }
 
 # Fixes an issue with P10k preventing FPP from working properly
 alias fpp="fpp -ni"
@@ -246,7 +250,7 @@ fpath=($fpath ~/.zsh/completion)
 fpath=(~/.daml/zsh $fpath)
 
 ## WSL settings
-if [[ "$(< /proc/version)" == *(Microsoft|WSL)* ]]; then
+if [[ -r /proc/version && "$(< /proc/version)" == *(Microsoft|WSL)* ]]; then
     # Open files in Explorer if on Windows
     function exp {
         explorer.exe `wslpath -w "$1"`
@@ -259,9 +263,7 @@ if [[ "$(< /proc/version)" == *(Microsoft|WSL)* ]]; then
 fi
 
 # Select in FPP, and open in neovim, in tabs
-function fppvi {
-    ${@:1} | fpp -a -c 'nvim -p'
-}
+alias fppvi="fpp -a -c 'nvim -p'"
 
 # Edit modified git files
 alias em="git status | grep 'modified\|new file' | fpp -a -c 'nvim -p' -e 'ENTER'"
@@ -348,13 +350,38 @@ alias wslpaste="powershell.exe Get-Clipboard | sed 's/\r//'"
 
 # Autocompletions
 source <(jwt completion bash)
-source <(gh completion -s zsh)
 source <(rg --generate complete-zsh)
-eval "$(gh copilot alias -- zsh)"
+
+if type brew &>/dev/null; then
+    FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+
+    autoload -Uz compinit
+    compinit
+  fi
+
 
 autoload -U compinit; compinit
 source ~/.oh-my-zsh/custom/plugins/fzf-tab/fzf-tab.plugin.zsh
+zstyle ':fzf-tab:*' fzf-bindings 'ctrl-a:toggle-all'
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
 alias e-no-ai="nvim -u ~/.dotfiles/no-ai.vim"
+function wcd {
+    _dir=$(git worktree list | fzf --accept-nth 1)
+    cd $_dir
+}
+
+function wa {
+    branch=$1
+    branch_escaped=$(echo $branch | sed 's/\//-/g')
+    worktree_dir=$HOME/worktrees/$branch_escaped
+
+    git worktree add $worktree_dir -b $branch
+    cd $worktree_dir
+}
+
+function sqlit_from_env() {
+    export $(cat .env.production) | xargs
+    sqlit $DATABASE_URL
+}
