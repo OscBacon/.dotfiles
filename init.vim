@@ -63,8 +63,6 @@ Plug 'towolf/vim-helm'
 Plug 'TovarishFin/vim-solidity'
 " DAML
 Plug 'obsidiansystems/daml.vim'
-" MDX 
-Plug 'davidmh/mdx.nvim', {'branch': 'main'}
 " Go
 " Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'luochen1990/rainbow'
@@ -636,14 +634,13 @@ require('gitsigns').setup({
 })
 
 -- Treesitter
-require("nvim-treesitter.configs").setup({
+require("nvim-treesitter").setup({
     ensure_installed = "all",
     highlight = { enable = true },
     indent = { enable = true },
     autotag = { enable = true, enable_close_on_slash = false },
 })
 
-require("mdx").setup()
 require("ts-error-translator").setup()
 -- TODOs
 require("todo-comments").setup()

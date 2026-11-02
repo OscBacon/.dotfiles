@@ -8,18 +8,24 @@ export COLORTERM=truecolor
 export NVM_LAZY=1
 
 # Brew
-export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
-export PATH="/home/linuxbrew/.linuxbrew/sbin:$PATH"
-export HOMEBREW_NO_AUTO_UPDATE=1
-export HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
-export HOMEBREW_CELLAR=/home/linuxbrew/.linuxbrew/Cellar
+if [ "$(uname -s)" = "Darwin" ]; then
+  export HOMEBREW_PREFIX=/opt/homebrew
+else
+  export HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
+fi
+
+export PATH="$HOMEBREW_PREFIX/bin:$PATH"
+export PATH="$HOMEBREW_PREFIX/sbin:$PATH"
+
+export HOMEBREW_CELLAR=$HOMEBREW_PREFIX/Cellar
 
 export EDITOR=nvim
+
 # export TERM="xterm-256color"
+#
 export WORKON_HOME=$HOME/Envs
-export VIRTUALENVWRAPPER_PYTHON=/home/linuxbrew/.linuxbrew/bin/python3
-# source $HOME/.local/bin/virtualenvwrapper.sh
-source /home/linuxbrew/.linuxbrew/bin/virtualenvwrapper.sh
+export VIRTUALENVWRAPPER_PYTHON=$HOMEBREW_PREFIX/bin/python3
+source $HOMEBREW_PREFIX/bin/virtualenvwrapper.sh
 
 # yarn
 export PATH="$HOME/.yarn/bin:$PATH"

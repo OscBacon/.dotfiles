@@ -218,9 +218,6 @@ alias fpp="fpp -ni"
 function ghcl { git clone git@github.com:$1.git ${@:2}}
 function ghcl_https { git clone https://github.com/$1.git ${@:2}}
 
-# Vulcan settings
-source ~/.zshrc.vulcan
-
 function json-curl { \
     curl $1 \
     -X POST \
