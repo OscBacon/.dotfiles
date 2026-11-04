@@ -29,7 +29,8 @@ Plug 'rhysd/committia.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 Plug 'scrooloose/nerdcommenter'
-Plug '~/.fzf' | Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 Plug 'itchyny/lightline.vim'
 Plug 'AndrewRadev/splitjoin.vim' " Join: gJ, split: gS
 "Plug 'elubow/cql-vim'
@@ -594,9 +595,8 @@ syntax on
 " NERDTree
 " autocmd StdinReadPre * let s:std_in=1
 " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | Explore | endif
-if empty(argv())
-    NERDTree
-endif
+" On VimEnter, so vim-devicons is loaded before NERDTree calls its listener
+autocmd VimEnter * if empty(argv()) | execute 'NERDTree' | endif
 
 " Copilot needs node 20
 let g:copilot_node_command = "~/.nvm/versions/node/v22.19.0/bin/node"

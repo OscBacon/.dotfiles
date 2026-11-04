@@ -29,7 +29,8 @@ Plug 'airblade/vim-gitgutter'
 Plug 'rhysd/committia.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'scrooloose/nerdcommenter'
-Plug '~/.fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 Plug 'itchyny/lightline.vim'
 Plug 'AndrewRadev/splitjoin.vim' " Join: gJ, split: gS
 Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern'}
